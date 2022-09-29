@@ -11,3 +11,12 @@ The raw sequences and their responses are located in raw_data. Run this data thr
 scripts/build_esm1b_data.sh
 ```
 
+## Training
+Multiple networks are availible for training on with auto cuda detection. The differences between networks are in depth and shape but all are simple neural nets.
+### HPC
+Slurm scripts are provided in `scripts/slurm_scripts`.
+### Regular
+To run the training model use:
+```bash
+model/trainmodel.py --asdf
+```
