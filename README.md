@@ -3,7 +3,7 @@ Can we model the metalation motifs of 600 protiens?
 ## Setup
 The environment is nothing special. It needs to standard PyTorch, Pandas, and Numpy. For easy setup use:
 ```bash
-scripts/install_conda_env.sh
+scripts/install_env.sh
 ```
 
 The raw sequences and their responses are located in raw_data. Run this data through ESM-1b:
@@ -20,3 +20,7 @@ To run the training model use:
 ```bash
 model/trainmodel.py --asdf
 ```
+## Next Steps
+- Should try with MSA. 
+- Use HMMER then esmb1 before putting it through network
+
