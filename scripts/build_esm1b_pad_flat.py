@@ -12,7 +12,7 @@ Before starting:
 
 BUILD_PARTIAL = False # when any of the builds run it will also save a tensor with len=2 (instead of len=600) for trial runs on personal computer
 
-INPUT_DIRS = [ "data/m1split/", "data/m2split/", "data/r1split/", "data/r2split/", "data/s1split/", "data/s2split/" ]
+INPUT_DIRS = [ "temp_data/m1split/", "temp_data/m2split/", "temp_data/r1split/", "temp_data/r2split/", "temp_data/s1split/", "temp_data/s2split/" ]
 
 import os
 if not os.path.exists("data/"): os.mkdir("data/") # we will save the outputs to this directory
