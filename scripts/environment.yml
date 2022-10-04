@@ -1,4 +1,4 @@
-name: metalaltion_motifs_env
+name: metal_motifs_env
 channels:
   - conda-forge
   - bioconda
