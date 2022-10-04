@@ -1,6 +1,7 @@
 # Restriction enzyme study
 Can we model the metalation motifs of 600 protiens?
 ## Setup
+***scripts might require elevated privileges***
 The environment is nothing special. It needs to standard PyTorch, Pandas, and Numpy. For easy setup use:
 ```bash
 scripts/install_conda_env.sh
