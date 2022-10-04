@@ -3,7 +3,7 @@ source lib/conda/bin/activate
 conda activate metal_motifs_env
 
 # make temp_data directory
-mkdir temp_data
+#mkdir temp_data *needs to be in root which has issues with 'nohup'
 
 # run splitting script to split each sequence in fasta files into two (sequences are too long to fit in esm1b)
 # see https://github.com/brianhie/evolocity/issues/2 for recomendation to split sequence.
@@ -33,4 +33,4 @@ python scripts/build_esm1b_pad_flat.py
 python scripts/build_target-motifs_numn.py
 
 # remove temp_data directory
-rm -r temp_data
+#rm -r temp_data
