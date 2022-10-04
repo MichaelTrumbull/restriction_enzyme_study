@@ -12,3 +12,4 @@ dependencies:
       - numpy==1.21.2
       - PyYAML==5.4.1
       - pandas
+      - fair-esm
