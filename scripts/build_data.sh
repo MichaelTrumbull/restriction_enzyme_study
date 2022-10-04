@@ -1,5 +1,6 @@
 # setting env 
-#source /lib/....?
+source lib/conda/bin/activate
+conda activate metal_motifs_env
 
 # make temp_data directory
 mkdir temp_data

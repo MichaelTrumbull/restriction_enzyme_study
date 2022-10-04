@@ -36,3 +36,9 @@ model/trainmodel.py --asdf
 - Should try with MSA. 
 - Use HMMER then esmb1 before putting it through network
 
+## Other
+For poor remote connection use 
+```bash
+nohup
+```
+so if a disconnection occurs it won't effect the shell script run.
