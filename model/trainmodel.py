@@ -37,14 +37,15 @@ train_x = torch.load(input_data_path).to(device=device)
 train_y = torch.load(target_data_path).to(device=device)
 
 ###############
-print("train_x.size()",train_x.size())
-print("train_y.size()",train_y.size())
+#print("train_x.size()",train_x.size())
+#print("train_y.size()",train_y.size())
 
+# Target data supplied is cut off after 600 sequences...
 train_x = torch.load(input_data_path)[0:600].to(device=device)
 train_y = torch.load(target_data_path)[0:600].to(device=device)
 
-print("train_x.size()",train_x.size())
-print("train_y.size()",train_y.size())
+#print("train_x.size()",train_x.size())
+#print("train_y.size()",train_y.size())
 ##############
 
 if args.type == "lin": net = networks.Net_Linear( len(train_x[0]), len(train_y[0]), hid, con).to(device=device)
@@ -55,6 +56,7 @@ if args.type == "conv2d":
 
 print(net)
 
+'''
 crossentropy = nn.CrossEntropyLoss()
 def split_crossentropy(a, target):
     bases = a[:,0:105-9] # len=96 = 24 * 4base
@@ -68,9 +70,11 @@ def split_crossentropy(a, target):
         hold.append( temp ) #cat the soft max of a set of 4 onto hold
     hold.append( crossentropy(spaces, target_spaces).item() ) #cat the soft max of the number of spaces
     return torch.tensor( sum(hold)/25 , requires_grad=True).to(device=device) # , dtype=torch.float )
+'''
+split_crossentropy = networks.split_crossentropy() # test if I can import this from networks to clean up training script
 
 def save_losses(temp_hold_losses):
-    print('Saving hold_losses. Len = ', len(temp_hold_losses))
+    #print('Saving hold_losses. Len = ', len(temp_hold_losses))
     with open("loss/" + run_name + ".txt", "w") as f: 
         f.write(str(temp_hold_losses))
 

@@ -2,6 +2,21 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+crossentropy = nn.CrossEntropyLoss()
+def split_crossentropy(a, target):
+    bases = a[:,0:105-9] # len=96 = 24 * 4base
+    target_bases = target[:,0:105-9]
+    spaces = a[:,105-9:105] # 9 digit one hot representing number of spaces
+    target_spaces = target[:,105-9:105]
+    hold = []
+    hold.append( crossentropy(bases[:,0:4], target_bases[:,0:4]).item() )# first base
+    for i in range(int(len(bases[0])/4) - 1):
+        temp =  crossentropy(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
+        hold.append( temp ) #cat the soft max of a set of 4 onto hold
+    hold.append( crossentropy(spaces, target_spaces).item() ) #cat the soft max of the number of spaces
+    return torch.tensor( sum(hold)/25 , requires_grad=True).to(device=device) # , dtype=torch.float )
+
+
 m = nn.Softmax(dim=1)
 def split_softmax(a):
     bases = a[:,0:105-9] # len=96 = 24 * 4base
