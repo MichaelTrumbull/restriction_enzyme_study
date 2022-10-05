@@ -1,4 +1,10 @@
 source lib/conda/bin/activate
 conda activate metal_motifs_env
 
-python model/trainmodel.py --flags
+nvidia-smi # see what gpu is avail
+
+echo Which GPU is available? (enter integer val)
+read gpu_number
+echo Running trainmodel.py with CUDA:$gpu_number
+
+#python model/trainmodel.py --flags
