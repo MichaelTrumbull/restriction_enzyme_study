@@ -7,7 +7,7 @@ echo Which GPU is available? Use integer value. Empty to cancel run
 read gpu_number
 echo Running trainmodel.py with CUDA:$gpu_number
 
-if ((number >= 0 && number <= 3))
+if ((gpu_number >= 0 && gpu_number <= 3))
 then
   #python model/trainmodel.py --flags
   echo finished
