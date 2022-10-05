@@ -11,9 +11,9 @@ Activate this environment with
 ```bash
 scripts/activate_conda_env.sh
 ```
-Install ESM scripts to run inference on our raw data to set up for training"
+Install ESM scripts outside of ***restriction_enzyme_study*** to run inference on our raw data to set up for training. This code is modified from facebook/esm because of an error thrown by passing too many arguments in their premade scripts we are using. This code is minimally modified.
 ```bash
-git clone https://github.com/facebookresearch/esm.git
+git clone https://github.com/MichaelTrumbull/esm-modified_script.git
 ```
 To build data for training from the raw_data run
 ```bash
