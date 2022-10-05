@@ -6,6 +6,9 @@ import argparse
 from datetime import datetime
 import networks
 
+# ! maybe put all of this in functions. Utilize if __name__ = "main":
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=9, help="integer value of number of epochs to run for")
 parser.add_argument('--connections', type=int, default=256, help="number of connections between nodes in linear layers")
@@ -59,6 +62,7 @@ if args.type == "conv2d":
 print(net)
 
 split_crossentropy = networks.split_crossentropy() # test if I can import this from networks to clean up training script IF THIS FAILS JUST COPY AND PASTE FROM NETWORKS BACK IN
+# ! i should give other options for loss calculation. similar to what i did in the network's activation function
 
 def save_losses(temp_hold_losses):
     with open("loss/" + run_name + ".txt", "w") as f: 
@@ -81,7 +85,7 @@ for epoch in range(EPOCHS):
         loss = split_crossentropy(outputs, batch_y)
         loss.backward()
         optimizer.step()
-    hold_losses.append(loss.item())
+    hold_losses.append(loss.item()) # need to place this inside batch loop...
 
 with open("loss/" + run_name + ".txt", "w") as f: 
     f.write(str(hold_losses))
