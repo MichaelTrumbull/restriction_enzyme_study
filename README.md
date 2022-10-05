@@ -21,7 +21,7 @@ scripts/build_data.sh
 ```
 This script will run 
 - splitMRS.py (Splits the raw data into esm1b-able chunks. esm1b cannot use >1022 length seq)
-- ../esm/scripts/extract.py (runs esm1b inference on each sequence *Note that this script is currently flagged to NOT use the GPU*)
+- ../esm-modified_script/scripts/extract.py (runs esm1b inference on each sequence *Note that this script is currently flagged to NOT use the GPU*)
 - build_esm1b_pad_flat.py (combines the tokened sequences into a sinlge input tensor)
 - build_target-motifs_numn.py (builds the target data using pseudo-one-hot encoding (A -> [1,0,0,0], G -> [0,0,1,0], R -> [1,0,1,0]) and also the size of the gap between sequence locations)
 
