@@ -29,6 +29,7 @@ This script will run
 Multiple networks are availible for training on with auto cuda detection. The differences between networks are in depth and shape but all are simple neural nets.
 ### HPC
 Slurm scripts are provided in `scripts/slurm_scripts`.
+Check which GPUs are available: `nvidia-smi`
 ### Regular
 To run the training model use:
 ```bash
