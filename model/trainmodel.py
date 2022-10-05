@@ -6,9 +6,6 @@ import argparse
 from datetime import datetime
 import networks
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print('using ', device)
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=99, help="integer value of number of epochs to run for")
 parser.add_argument('--connections', type=int, default=256, help="number of connections between nodes in linear layers")
@@ -16,7 +13,14 @@ parser.add_argument('--hid', type=int, default=0, help="number of hidden linear 
 parser.add_argument('--lrval', type=float, default=0.001, help="lrval jump value during training")
 parser.add_argument('--type', type=str, default="lin", help="network being used (lin, conv1d, conv2d)")
 parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
+parser.add_argument('--device', type=str, default="", help="Specify which gpu. Defaults to trying any gpu, then uses cpu")
 args = parser.parse_args()
+
+if args.device == "": 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device(args.device)
+print('using ', device)
 
 hid = args.hid
 t = datetime.now().strftime("%m%d%H%M%S")
