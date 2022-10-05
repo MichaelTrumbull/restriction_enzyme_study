@@ -15,7 +15,7 @@ parser.add_argument('--connections', type=int, default=256, help="number of conn
 parser.add_argument('--hid', type=int, default=0, help="number of hidden linear layers in the network")
 parser.add_argument('--lrval', type=float, default=0.001, help="lrval jump value during training")
 parser.add_argument('--type', type=str, default="lin", help="network being used (lin, conv1d, conv2d)")
-parser.add_argument('--batch', type=int, default=600, help="batch size. total len of dataset=600")
+parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
 args = parser.parse_args()
 
 hid = args.hid

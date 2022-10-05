@@ -13,7 +13,7 @@ def split_softmax(a):
     return hold
 
 class Net_Linear(nn.Module):
-    def __init__(self, input_size=10, output_size=10, hidden_layers=1, connections_between_layers=512):
+    def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=512, activation_function = "split_softmax"):
         super().__init__()
 
         self.i = input_size #len(train_x[0])
@@ -21,30 +21,35 @@ class Net_Linear(nn.Module):
         self.hid = hidden_layers
         self.con = connections_between_layers
 
-        self.fc1 = nn.Linear(self.i, self.con)
-        if self.hid > 0: self.fc2 = nn.Linear(self.con, self.con)
-        if self.hid > 1: self.fc3 = nn.Linear(self.con, self.con)
-        if self.hid > 2: self.fc4 = nn.Linear(self.con, self.con)
-        if self.hid > 3: self.fc5 = nn.Linear(self.con, self.con)
-        if self.hid > 4: self.fc6 = nn.Linear(self.con, self.con)
-        if self.hid > 5: self.fc7 = nn.Linear(self.con, self.con)
-        if self.hid > 6: self.fc8 = nn.Linear(self.con, self.con)
-        if self.hid > 7: self.fc9 = nn.Linear(self.con, self.con)
-        if self.hid > 8: self.fc10 = nn.Linear(self.con, self.con)
-        self.fc11 = nn.Linear(self.con, self.o)
+        if activation_function == "split_softmax": self.act_func = split_softmax()
+        if activation_function == "softmax": self.act_func = nn.Softmax(dim=1)
+
+        if self.hid > 0: self.fc1 = nn.Linear(self.i, self.con)
+        if self.hid > 1: self.fc2 = nn.Linear(self.con, self.con)
+        if self.hid > 2: self.fc3 = nn.Linear(self.con, self.con)
+        if self.hid > 3: self.fc4 = nn.Linear(self.con, self.con)
+        if self.hid > 4: self.fc5 = nn.Linear(self.con, self.con)
+        if self.hid > 5: self.fc6 = nn.Linear(self.con, self.con)
+        if self.hid > 6: self.fc7 = nn.Linear(self.con, self.con)
+        if self.hid > 7: self.fc8 = nn.Linear(self.con, self.con)
+        if self.hid > 8: self.fc9 = nn.Linear(self.con, self.con)
+        if self.hid > 9: self.fc10 = nn.Linear(self.con, self.con)
+
+        if self.hid > 0: self.fc11 = nn.Linear(self.con, self.o)
+        if self.hid == 0: self.fc11 = nn.Linear(self.i, self.o) # no connections
     def forward(self, x):
-        x = F.relu(self.fc1(x))
-        if self.hid > 0: x = F.relu(self.fc2(x))
-        if self.hid > 1: x = F.relu(self.fc3(x))
-        if self.hid > 2: x = F.relu(self.fc4(x))
-        if self.hid > 3: x = F.relu(self.fc5(x))
-        if self.hid > 4: x = F.relu(self.fc6(x))
-        if self.hid > 5: x = F.relu(self.fc7(x))
-        if self.hid > 6: x = F.relu(self.fc8(x))
-        if self.hid > 7: x = F.relu(self.fc9(x))
-        if self.hid > 8: x = F.relu(self.fc10(x))
+        if self.hid > 0: x = F.relu(self.fc1(x))
+        if self.hid > 1: x = F.relu(self.fc2(x))
+        if self.hid > 2: x = F.relu(self.fc3(x))
+        if self.hid > 3: x = F.relu(self.fc4(x))
+        if self.hid > 4: x = F.relu(self.fc5(x))
+        if self.hid > 5: x = F.relu(self.fc6(x))
+        if self.hid > 6: x = F.relu(self.fc7(x))
+        if self.hid > 7: x = F.relu(self.fc8(x))
+        if self.hid > 8: x = F.relu(self.fc9(x))
+        if self.hid > 9: x = F.relu(self.fc10(x))
         x = self.fc11(x)
-        return split_softmax(x)
+        return self.act_func(x)
 
 class Net_Conv1d_funnel(nn.Module): #uses conv3 to flatten the kernel feature back to 1
     def __init__(self, in_len, out_len, k=5, ft=2, con=256):
