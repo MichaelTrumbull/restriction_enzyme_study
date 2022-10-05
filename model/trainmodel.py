@@ -14,6 +14,8 @@ parser.add_argument('--lrval', type=float, default=0.001, help="lrval jump value
 parser.add_argument('--type', type=str, default="lin", help="network being used (lin, conv1d, conv2d)")
 parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
 parser.add_argument('--device', type=str, default="", help="Specify which gpu. Defaults to trying any gpu, then uses cpu")
+parser.add_argument('--input_path', type=str, default="/data/msr-esmb1-flat-padded.pt", help="location of input tensor for training")
+parser.add_argument('--target_path', type=str, default="/data/motifs-base4-numN.pt", help="location of input tensor for training")
 args = parser.parse_args()
 
 if args.device == "": 
@@ -30,9 +32,9 @@ lrval = args.lrval
 run_name = t+"-FC"+"-C"+str(con)+"-Hid"+str(hid)+"-LR"+str(lrval)+str(args.type)
 print('run_name: ', run_name)
 
-input_data_path = "../data/msr-esmb1-flat-padded.pt"
-input_data_path_2d = "../data/msr-esmb1.pt"
-target_data_path = "../data/motifs-base4-numN.pt"
+input_data_path = args.input_path
+input_data_path_2d = args.input_path #"../data/msr-esmb1.pt" # maybe get rid of this line and modify later code?
+target_data_path = args.target_path
 train_x = torch.load(input_data_path).to(device=device)
 train_y = torch.load(target_data_path).to(device=device)
 
