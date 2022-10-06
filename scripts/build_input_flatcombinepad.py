@@ -1,15 +1,9 @@
 '''
-Script to build torch tensors for: Type I RMS metalation motifs
-Before starting: 
-    Use ESM-b1 language model to convert 'm', 'r', and 's' FASTA files to richer data tensor
-    ESM-b1: https://github.com/facebookresearch/esm *Should use the script provided for conversion
-    Need metalation motifs in csv form
-
-
+Script to build an input torch tensor for Type I RMS metalation motifs
+It is expecting indicidual 2d torch objects for each sequence of each M, R, and S inside files located at INPUT_DIRS.
 '''
 
-
-# each esmb1 tensor is flattened and padded to get a 2d tensor
+# each esmb1 tensor is combined,flattened, then padded to get a 2d tensor
 
 BUILD_PARTIAL = False # when any of the builds run it will also save a tensor with len=2 (instead of len=600) for trial runs on personal computer
 
