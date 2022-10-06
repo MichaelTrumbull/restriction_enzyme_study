@@ -8,6 +8,11 @@ Before starting:
 
 '''
 
+'''
+!! This version assumes m1s,m2s,... all have the same file names in them and same number. 
+This leads to indexing issues while looping through smaller save locations
+'''
+
 # each esmb1 tensor is flattened and padded to get a 2d tensor
 
 BUILD_PARTIAL = False # when any of the builds run it will also save a tensor with len=2 (instead of len=600) for trial runs on personal computer

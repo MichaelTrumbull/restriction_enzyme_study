@@ -16,16 +16,14 @@ parser.add_argument('--hid', type=int, default=0, help="number of hidden linear 
 parser.add_argument('--lrval', type=float, default=0.001, help="lrval jump value during training")
 parser.add_argument('--type', type=str, default="lin", help="network being used (lin, conv1d, conv2d)")
 parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
-parser.add_argument('--device', type=str, default="", help="Specify which gpu. Defaults to trying any gpu, then uses cpu")
 parser.add_argument('--input_path', type=str, default="/data/msr-esmb1-flat-padded.pt", help="location of input tensor for training")
 parser.add_argument('--target_path', type=str, default="/data/motifs-base4-numN.pt", help="location of input tensor for training")
 args = parser.parse_args()
 
-if args.device == "": 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-else:
-    device = torch.device(args.device)
-print('using ', device)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# ! add statement to save details of the run. such as layers, dimensions, epochs, batches... Use this info file instead the run name. save such that these details can be accessed in the future by a script
+
 
 hid = args.hid
 t = datetime.now().strftime("%m%d%H%M%S")

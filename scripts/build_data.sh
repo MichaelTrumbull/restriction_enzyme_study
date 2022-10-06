@@ -33,7 +33,7 @@ echo finished s
 # build input data tensor by taking the individual .pt files for each sequence, 
 # pushing them together, padding, and flattening them.
 echo building input data
-python scripts/build_esm1b_pad_flat.py
+python scripts/build_combinepadflat.py
 
 # build target data using a psuedo one hot method
 echo building target data
