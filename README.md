@@ -25,6 +25,12 @@ This script will run
 - build_esm1b_pad_flat.py (combines the tokened sequences into a sinlge input tensor)
 - build_target-motifs_numn.py (builds the target data using pseudo-one-hot encoding (A -> [1,0,0,0], G -> [0,0,1,0], R -> [1,0,1,0]) and also the size of the gap between sequence locations)
 
+### Test data was built correctly
+Run this script to print out the input and target data tensor shapes to check the build ran correctly.
+```bash
+scripts/test_data.py
+```
+
 ## Training
 Multiple networks are availible for training on with auto cuda detection. The differences between networks are in depth and shape but all are simple neural nets.
 ### HPC
@@ -38,6 +44,9 @@ model/trainmodel.py --asdf
 ## Next Steps
 - Should try with MSA. 
 - Use HMMER then esmb1 before putting it through network
+Build modifications:
+- the target data represents the number of spaces between specified residues as a number at the end. What if I don't do that and just encode each N as [1,1,1,1]. 
+
 
 ## Other
 For poor remote connection use 

@@ -1,2 +1,4 @@
 /lib/
+/data/
+/temp_data/
 .DS_Store

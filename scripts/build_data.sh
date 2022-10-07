@@ -30,14 +30,9 @@ python ../esm-modified_script/scripts/extract.py esm1b_t33_650M_UR50S temp_data/
   temp_data/s2split --repr_layers 0 32 33 --include mean per_tok --nogpu
 echo finished s
 
-# build input data tensor by taking the individual .pt files for each sequence, 
-# pushing them together, padding, and flattening them.
-echo building input data
-python scripts/build_combinepadflat.py
-
-# build target data using a psuedo one hot method
+# build input and target data
 echo building target data
-python scripts/build_target-motifs_numn.py
+python scripts/build_input_and_target.py
 
 # remove temp_data directory
 #rm -r temp_data
