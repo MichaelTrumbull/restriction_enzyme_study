@@ -16,8 +16,8 @@ parser.add_argument('--hid', type=int, default=0, help="number of hidden linear 
 parser.add_argument('--lrval', type=float, default=0.001, help="lrval jump value during training")
 parser.add_argument('--type', type=str, default="lin", help="network being used (lin, conv1d, conv2d)")
 parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
-parser.add_argument('--input_path', type=str, default="/data/msr-esmb1-flat-padded.pt", help="location of input tensor for training")
-parser.add_argument('--target_path', type=str, default="/data/motifs-base4-numN.pt", help="location of input tensor for training")
+parser.add_argument('--input_path', type=str, default="data/msr-esm1b-33-flat-pad.pt", help="location of input tensor for training")
+parser.add_argument('--target_path', type=str, default="data/metalation_motifs_onehot_pad.pt", help="location of input tensor for training")
 args = parser.parse_args()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -94,7 +94,7 @@ for epoch in range(EPOCHS):
         loss = split_crossentropy(outputs, batch_y)
         loss.backward()
         optimizer.step()
-    hold_losses.append(loss.item()) # need to place this inside batch loop...
+        hold_losses.append(loss.item()) # was originally outside batch loop...
 
 with open(savepath + "/loss.txt", "w") as f: 
     f.write(str(hold_losses))
