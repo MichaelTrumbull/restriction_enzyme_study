@@ -121,7 +121,7 @@ for epoch in range(EPOCHS):
         net.zero_grad()
         outputs = net(batch_x)
         if args.crossent:
-            loss = nn.CrossEntropyLoss(outputs, batch_y)
+            loss = crossentropy(outputs, batch_y)
         elif met_mot: 
             loss = split_crossentropy_met_mot(outputs, batch_y)
         else:
