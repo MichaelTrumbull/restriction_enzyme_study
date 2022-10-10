@@ -19,6 +19,7 @@ parser.add_argument('--type', type=str, default="lin", help="network being used 
 parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
 parser.add_argument('--input_path', type=str, default="data/msr-esm1b-33-flat-pad.pt", help="location of input tensor for training")
 parser.add_argument('--target_path', type=str, default="data/metalation_motifs_onehot_pad.pt", help="location of input tensor for training")
+parser.add_argument('--crossent', action='store_true', help="Use the basic cross entropy loss function in this run.")
 args = parser.parse_args()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -33,7 +34,7 @@ lrval = args.lrval
 if args.target_path == "data/metalation_motifs_onehot_pad.pt": 
     met_mot = True # This target data (also pseudo one hot encoded) is not spaced according to the original loss func i made. A new one with the correct positioning is needed
 else:
-    met_mot = False
+    met_mot = False #
 
 run_name = datetime.now().strftime("%m-%d-%H-%M")
 savepath = "runs/" + run_name
@@ -118,7 +119,9 @@ for epoch in range(EPOCHS):
 
         net.zero_grad()
         outputs = net(batch_x)
-        if met_mot: 
+        if args.crossent:
+            loss = nn.CrossEntropyLoss(outputs, batch_y)
+        elif met_mot: 
             loss = split_crossentropy_met_mot(outputs, batch_y)
         else:
             loss = split_crossentropy_motif1st2ndhalf(outputs, batch_y)
