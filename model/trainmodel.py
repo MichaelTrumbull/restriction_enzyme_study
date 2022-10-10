@@ -44,12 +44,10 @@ os.mkdir(savepath)
 input_data_path = args.input_path
 input_data_path_2d = args.input_path #"../data/msr-esmb1.pt" # maybe get rid of this line and modify later code?
 target_data_path = args.target_path
-print(target_data_path)
 
 train_x = torch.load(input_data_path)
 train_y = torch.load(target_data_path)
 
-print(len(train_y[0]))
 
 if args.type == "lin": net = networks.Net_Linear( len(train_x[0]), len(train_y[0]), hid, con).to(device=device)
 if args.type == "conv1d": net = networks.Net_Conv1d_flatten( len(train_x[0]), len(train_y[0]),k=10,ft=1,con=con ).to(device=device)
@@ -77,7 +75,6 @@ def save_losses(temp_hold_losses):
     with open(savepath + "/loss.txt", "w") as f: 
         f.write(str(temp_hold_losses))
 
-print(net)
 
 mse = nn.MSELoss()
 crossentropy = nn.CrossEntropyLoss()
@@ -121,21 +118,14 @@ for epoch in range(EPOCHS):
         save_losses(hold_losses)
 
         net.zero_grad()
-        print('batch_x.size()',batch_x.size())
         outputs = net(batch_x)
-        print('outputs.size()',outputs.size())
         if args.mse:
-            print('running mse')
             loss = mse(outputs, batch_y)
         elif args.crossent:
-            print('running basic crossent')
-            print('batch_y.size()',batch_y.size())
             loss = crossentropy(outputs, batch_y)
         elif met_mot: 
-            print('running split cross ent met mot')
             loss = split_crossentropy_met_mot(outputs, batch_y)
         else:
-            print('running split cross ent motifs 1st 2nd half')
             loss = split_crossentropy_motif1st2ndhalf(outputs, batch_y)
         loss.backward()
         optimizer.step()
