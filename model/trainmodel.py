@@ -30,7 +30,7 @@ hid = args.hid
 con = args.connections
 lrval = args.lrval
 
-run_name = datetime.now().strftime("%m%d%H%M%S")
+run_name = datetime.now().strftime("%m-%d-%H-%M")
 savepath = "runs/" + run_name
 os.mkdir(savepath)
 
@@ -68,11 +68,11 @@ with open(savepath + "/setup.log", "w") as f:
     f.write('--batch:' + str(args.batch) + "\n")
     f.write('--input_path:' + str(args.input_path) + "\n")
     f.write('--target_path:' + str(args.target_path) + "\n")
-    f.write("train_x.size():" + str(train_x.size()))
-    f.write("train_y.size():" + str(train_y.size()))
-    f.write(str(net))
+    f.write("train_x.size():" + str(train_x.size()) + "\n")
+    f.write("train_y.size():" + str(train_y.size()) + "\n")
+    f.write(str(net) + "\n")
 
-split_crossentropy = networks.split_crossentropy() # test if I can import this from networks to clean up training script IF THIS FAILS JUST COPY AND PASTE FROM NETWORKS BACK IN
+#split_crossentropy = networks.split_crossentropy() # test if I can import this from networks to clean up training script IF THIS FAILS JUST COPY AND PASTE FROM NETWORKS BACK IN
 # ! i should give other options for loss calculation. similar to what i did in the network's activation function
 
 def save_losses(temp_hold_losses):
@@ -97,7 +97,7 @@ for epoch in range(EPOCHS):
 
         net.zero_grad()
         outputs = net(batch_x)
-        loss = split_crossentropy(outputs, batch_y)
+        loss = networks.split_crossentropy(outputs, batch_y)
         loss.backward()
         optimizer.step()
         hold_losses.append(loss.item()) # was originally outside batch loop...
