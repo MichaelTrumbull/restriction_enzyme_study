@@ -43,8 +43,8 @@ train_y = torch.load(target_data_path).to(device=device)
 #print("train_y.size()",train_y.size())
 
 # Target data supplied is cut off after 600 sequences...
-train_x = torch.load(input_data_path)[0:600].to(device=device)
-train_y = torch.load(target_data_path)[0:600].to(device=device)
+train_x = torch.load(input_data_path)
+train_y = torch.load(target_data_path)
 
 #print("train_x.size()",train_x.size())
 #print("train_y.size()",train_y.size())
@@ -53,7 +53,7 @@ train_y = torch.load(target_data_path)[0:600].to(device=device)
 if args.type == "lin": net = networks.Net_Linear( len(train_x[0]), len(train_y[0]), hid, con).to(device=device)
 if args.type == "conv1d": net = networks.Net_Conv1d_flatten( len(train_x[0]), len(train_y[0]),k=10,ft=1,con=con ).to(device=device)
 if args.type == "conv2d": 
-    train_x = torch.load(input_data_path_2d).to(device=device)
+    train_x = torch.load(input_data_path_2d).to(device=device) #might have memory issues
     net = networks.Net_Conv2d( len(train_x[0]), len(train_x[0,0]), len(train_y[0]),k=10,ft=1,con=con ).to(device=device)
 
 with open(savepath + "/setup.log", "w") as f: 
@@ -86,6 +86,9 @@ for epoch in range(EPOCHS):
     for i in range(0, len(train_x), BATCH_SIZE): 
         batch_x = train_x[i:i+BATCH_SIZE]
         batch_y = train_y[i:i+BATCH_SIZE]
+
+        batch_x = batch_x.to(device=device)
+        batch_y = batch_y.to(device=device)
 
         save_losses(hold_losses)
 
