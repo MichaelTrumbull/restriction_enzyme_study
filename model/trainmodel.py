@@ -104,7 +104,9 @@ BATCH_SIZE = args.batch
 EPOCHS = args.epochs
 
 hold_losses = []
+hold_losses_epoch = []
 for epoch in range(EPOCHS):
+    hold_losses_epoch.append(0)
     for i in range(0, len(train_x), BATCH_SIZE): 
         batch_x = train_x[i:i+BATCH_SIZE]
         batch_y = train_y[i:i+BATCH_SIZE]
@@ -123,10 +125,12 @@ for epoch in range(EPOCHS):
         loss.backward()
         optimizer.step()
         hold_losses.append(loss.item()) # was originally outside batch loop...
+        hold_losses_epoch[epoch] = hold_losses_epoch[epoch] + loss.item()
 
 with open(savepath + "/loss.txt", "w") as f: 
     f.write(str(hold_losses))
-
+with open(savepath + "/epochloss.txt", "w") as f: 
+    f.write(str(hold_losses_epoch))
 #torch.save(net.state_dict(), run_name + ".statedict" )
 
 import matplotlib.pyplot as plt
