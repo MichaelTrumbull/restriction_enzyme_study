@@ -49,6 +49,8 @@ print(target_data_path)
 train_x = torch.load(input_data_path)
 train_y = torch.load(target_data_path)
 
+print(len(train_y[0]))
+
 if args.type == "lin": net = networks.Net_Linear( len(train_x[0]), len(train_y[0]), hid, con).to(device=device)
 if args.type == "conv1d": net = networks.Net_Conv1d_flatten( len(train_x[0]), len(train_y[0]),k=10,ft=1,con=con ).to(device=device)
 if args.type == "conv2d": 
