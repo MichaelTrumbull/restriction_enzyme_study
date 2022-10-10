@@ -11,7 +11,7 @@ import os
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--epochs', type=int, default=99, help="integer value of number of epochs to run for")
+parser.add_argument('--epochs', type=int, default=9, help="integer value of number of epochs to run for")
 parser.add_argument('--connections', type=int, default=256, help="number of connections between nodes in linear layers")
 parser.add_argument('--hid', type=int, default=0, help="number of hidden linear layers in the network")
 parser.add_argument('--lrval', type=float, default=0.001, help="lrval jump value during training")
