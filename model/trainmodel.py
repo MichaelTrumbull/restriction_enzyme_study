@@ -121,13 +121,13 @@ for epoch in range(EPOCHS):
         save_losses(hold_losses)
 
         net.zero_grad()
+        print('batch_x.size()',batch_x.size())
         outputs = net(batch_x)
+        print('outputs.size()',outputs.size())
         if args.mse:
             loss = mse(outputs, batch_y)
         elif args.crossent:
-            print('size')
-            print(outputs.size())
-            print(batch_y.size())
+            print('batch_y.size()',batch_y.size())
             loss = crossentropy(outputs, batch_y)
         elif met_mot: 
             loss = split_crossentropy_met_mot(outputs, batch_y)
