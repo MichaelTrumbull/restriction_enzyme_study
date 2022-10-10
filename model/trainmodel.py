@@ -26,12 +26,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 hid = args.hid
-t = datetime.now().strftime("%m%d%H%M%S")
 con = args.connections
 lrval = args.lrval
 
-run_name = t+"-FC"+"-C"+str(con)+"-Hid"+str(hid)+"-LR"+str(lrval)+str(args.type)
-print('run_name: ', run_name)
+run_name = datetime.now().strftime("%m%d%H%M%S")
+savepath = "runs/" + run_name
 
 input_data_path = args.input_path
 input_data_path_2d = args.input_path #"../data/msr-esmb1.pt" # maybe get rid of this line and modify later code?
@@ -57,13 +56,25 @@ if args.type == "conv2d":
     train_x = torch.load(input_data_path_2d).to(device=device)
     net = networks.Net_Conv2d( len(train_x[0]), len(train_x[0,0]), len(train_y[0]),k=10,ft=1,con=con ).to(device=device)
 
-print(net)
+with open(savepath + "/setup.log", "w") as f: 
+    f.write(run_name + "\n")
+    f.write('--epochs:' + args.epochs + "\n")
+    f.write('--connections:' + args.connections + "\n")
+    f.write('--hid:' + args.hid + "\n")
+    f.write('--lrval:' + args.lrval + "\n")
+    f.write('--type:' + args.type + "\n")
+    f.write('--batch:' + args.batch + "\n")
+    f.write('--input_path:' + args.input_path + "\n")
+    f.write('--target_path:' + args.target_path + "\n")
+    f.write("train_x.size():" + train_x.size())
+    f.write("train_y.size():" + train_y.size())
+    f.write(str(net))
 
 split_crossentropy = networks.split_crossentropy() # test if I can import this from networks to clean up training script IF THIS FAILS JUST COPY AND PASTE FROM NETWORKS BACK IN
 # ! i should give other options for loss calculation. similar to what i did in the network's activation function
 
 def save_losses(temp_hold_losses):
-    with open("loss/" + run_name + ".txt", "w") as f: 
+    with open(savepath + "/loss.txt", "w") as f: 
         f.write(str(temp_hold_losses))
 
 optimizer = optim.Adam(net.parameters(), lr=lrval)
@@ -85,7 +96,7 @@ for epoch in range(EPOCHS):
         optimizer.step()
     hold_losses.append(loss.item()) # need to place this inside batch loop...
 
-with open("loss/" + run_name + ".txt", "w") as f: 
+with open(savepath + "/loss.txt", "w") as f: 
     f.write(str(hold_losses))
 
 #torch.save(net.state_dict(), run_name + ".statedict" )
