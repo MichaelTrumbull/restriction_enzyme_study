@@ -44,8 +44,7 @@ os.mkdir(savepath)
 input_data_path = args.input_path
 input_data_path_2d = args.input_path #"../data/msr-esmb1.pt" # maybe get rid of this line and modify later code?
 target_data_path = args.target_path
-train_x = torch.load(input_data_path).to(device=device)
-train_y = torch.load(target_data_path).to(device=device)
+print(target_data_path)
 
 train_x = torch.load(input_data_path)
 train_y = torch.load(target_data_path)
