@@ -13,3 +13,4 @@ dependencies:
       - PyYAML==5.4.1
       - pandas
       - fair-esm
+      - matplotlib

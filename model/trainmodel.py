@@ -40,17 +40,8 @@ target_data_path = args.target_path
 train_x = torch.load(input_data_path).to(device=device)
 train_y = torch.load(target_data_path).to(device=device)
 
-###############
-#print("train_x.size()",train_x.size())
-#print("train_y.size()",train_y.size())
-
-# Target data supplied is cut off after 600 sequences...
 train_x = torch.load(input_data_path)
 train_y = torch.load(target_data_path)
-
-#print("train_x.size()",train_x.size())
-#print("train_y.size()",train_y.size())
-##############
 
 if args.type == "lin": net = networks.Net_Linear( len(train_x[0]), len(train_y[0]), hid, con).to(device=device)
 if args.type == "conv1d": net = networks.Net_Conv1d_flatten( len(train_x[0]), len(train_y[0]),k=10,ft=1,con=con ).to(device=device)
@@ -120,3 +111,6 @@ with open(savepath + "/loss.txt", "w") as f:
 
 #torch.save(net.state_dict(), run_name + ".statedict" )
 
+import matplotlib.pyplot as plt
+plt.plot(hold_losses)
+plt.savefig(savepath + "/loss.plot")
