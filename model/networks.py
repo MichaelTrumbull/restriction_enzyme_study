@@ -28,16 +28,13 @@ def split_softmax(a):
     return hold
 
 class Net_Linear(nn.Module):
-    def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=512, activation_function = "split_softmax"):
+    def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=512):
         super().__init__()
 
         self.i = input_size #len(train_x[0])
         self.o = output_size #len(train_y[0])
         self.hid = hidden_layers
         self.con = connections_between_layers
-
-        if activation_function == "split_softmax": self.act_func = split_softmax()
-        if activation_function == "softmax": self.act_func = nn.Softmax(dim=1)
 
         if self.hid > 0: self.fc1 = nn.Linear(self.i, self.con)
         if self.hid > 1: self.fc2 = nn.Linear(self.con, self.con)
@@ -64,7 +61,7 @@ class Net_Linear(nn.Module):
         if self.hid > 8: x = F.relu(self.fc9(x))
         if self.hid > 9: x = F.relu(self.fc10(x))
         x = self.fc11(x)
-        return self.act_func(x)
+        return split_softmax(x)
 
 class Net_Conv1d_funnel(nn.Module): #uses conv3 to flatten the kernel feature back to 1
     def __init__(self, in_len, out_len, k=5, ft=2, con=256):
