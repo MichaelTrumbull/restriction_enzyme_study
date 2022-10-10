@@ -99,7 +99,15 @@ def split_crossentropy_met_mot(a, target): # this should be used if target data 
         temp =  crossentropy(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
         hold.append( temp ) #cat the soft max of a set of 4 onto hold
     return torch.tensor( sum(hold)/34 , requires_grad=True).to(device=device) # , dtype=torch.float )
-
+def split_mse_136(a, target): # this should be used if target data is from "data/metalation_motifs_onehot_pad.pt"
+    bases = a[:,:] # All are bases in this 136 bit encoding. 
+    target_bases = target[:,:] # All are bases. There are no 'spaces' accounted for at the end
+    hold = []
+    hold.append( mse(bases[:,0:4], target_bases[:,0:4]).item() )# first base
+    for i in range(int(len(bases[0])/4) - 1):
+        temp =  mse(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
+        hold.append( temp ) #cat the soft max of a set of 4 onto hold
+    return torch.tensor( sum(hold)/34 , requires_grad=True).to(device=device) # , dtype=torch.float )
 optimizer = optim.Adam(net.parameters(), lr=lrval)
 BATCH_SIZE = args.batch
 EPOCHS = args.epochs
@@ -121,6 +129,8 @@ for epoch in range(EPOCHS):
         outputs = net(batch_x)
         if args.mse:
             loss = mse(outputs, batch_y)
+        if args.mse_136:
+            loss = split_mse_136(outputs, batch_y)
         elif args.crossent:
             loss = crossentropy(outputs, batch_y)
         elif met_mot: 
