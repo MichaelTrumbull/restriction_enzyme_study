@@ -20,6 +20,7 @@ parser.add_argument('--batch', type=int, default=32, help="batch size. total len
 parser.add_argument('--input_path', type=str, default="data/msr-esm1b-33-flat-pad.pt", help="location of input tensor for training")
 parser.add_argument('--target_path', type=str, default="data/metalation_motifs_onehot_pad.pt", help="location of input tensor for training")
 parser.add_argument('--crossent', action='store_true', help="Use the basic cross entropy loss function in this run.")
+parser.add_argument('--mse', action='store_true', help="Use mse loss func.")
 args = parser.parse_args()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -71,13 +72,11 @@ with open(savepath + "/setup.log", "w") as f:
     f.write("crossent:" + str(args.crossent) + "\n")
     f.write(str(net) + "\n")
 
-#split_crossentropy = networks.split_crossentropy() # test if I can import this from networks to clean up training script IF THIS FAILS JUST COPY AND PASTE FROM NETWORKS BACK IN
-# ! i should give other options for loss calculation. similar to what i did in the network's activation function
-
 def save_losses(temp_hold_losses):
     with open(savepath + "/loss.txt", "w") as f: 
         f.write(str(temp_hold_losses))
 
+mse = nn.MSELoss()
 crossentropy = nn.CrossEntropyLoss()
 def split_crossentropy_motif1st2ndhalf(a, target):
     bases = a[:,0:105-9] # len=96 = 24 * 4base
@@ -120,7 +119,12 @@ for epoch in range(EPOCHS):
 
         net.zero_grad()
         outputs = net(batch_x)
-        if args.crossent:
+        if args.mse:
+            loss = mse(outputs, batch_y)
+        elif args.crossent:
+            print('size')
+            print(outputs.size())
+            print(batch_y.size())
             loss = crossentropy(outputs, batch_y)
         elif met_mot: 
             loss = split_crossentropy_met_mot(outputs, batch_y)
