@@ -141,3 +141,4 @@ import matplotlib.pyplot as plt
 plt.plot(hold_losses)
 plt.title('b' + str(args.batch) + 'c' + str(args.connections) + 'h' + str(args.hid) + 'target' + str(args.target_path))
 plt.savefig(savepath + "/loss.png")
+print('finished')
