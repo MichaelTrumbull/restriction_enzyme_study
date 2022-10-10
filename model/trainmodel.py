@@ -5,6 +5,7 @@ import torch.optim as optim
 import argparse
 from datetime import datetime
 import networks
+import os
 
 # ! maybe put all of this in functions. Utilize if __name__ = "main":
 
@@ -31,6 +32,7 @@ lrval = args.lrval
 
 run_name = datetime.now().strftime("%m%d%H%M%S")
 savepath = "runs/" + run_name
+os.mkdir(savepath)
 
 input_data_path = args.input_path
 input_data_path_2d = args.input_path #"../data/msr-esmb1.pt" # maybe get rid of this line and modify later code?
@@ -76,6 +78,7 @@ split_crossentropy = networks.split_crossentropy() # test if I can import this f
 def save_losses(temp_hold_losses):
     with open(savepath + "/loss.txt", "w") as f: 
         f.write(str(temp_hold_losses))
+
 
 optimizer = optim.Adam(net.parameters(), lr=lrval)
 BATCH_SIZE = args.batch
