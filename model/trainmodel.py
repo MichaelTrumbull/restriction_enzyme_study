@@ -21,6 +21,7 @@ parser.add_argument('--input_path', type=str, default="data/msr-esm1b-33-flat-pa
 parser.add_argument('--target_path', type=str, default="data/metalation_motifs_onehot_pad.pt", help="location of input tensor for training")
 parser.add_argument('--crossent', action='store_true', help="Use the basic cross entropy loss function in this run.")
 parser.add_argument('--mse', action='store_true', help="Use mse loss func.")
+parser.add_argument('--mse_136', action='store_true', help="Use split mse loss func for 136 len data.")
 args = parser.parse_args()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -32,8 +33,8 @@ hid = args.hid
 con = args.connections
 lrval = args.lrval
 
-if args.target_path == "data/metalation_motifs_onehot_pad.pt": 
-    met_mot = True # This target data (also pseudo one hot encoded) is not spaced according to the original loss func i made. A new one with the correct positioning is needed
+if args.target_path == "data/metalation_motifs_onehot_pad.pt": ##### !!! INSTEAD of this just test what the len of the target is. 105 or 136...
+    met_mot = True 
 else:
     met_mot = False #
 
