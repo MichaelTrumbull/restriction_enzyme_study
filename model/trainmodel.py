@@ -60,16 +60,16 @@ if args.type == "conv2d":
 
 with open(savepath + "/setup.log", "w") as f: 
     f.write(run_name + "\n")
-    f.write('--epochs:' + args.epochs + "\n")
-    f.write('--connections:' + args.connections + "\n")
-    f.write('--hid:' + args.hid + "\n")
-    f.write('--lrval:' + args.lrval + "\n")
-    f.write('--type:' + args.type + "\n")
-    f.write('--batch:' + args.batch + "\n")
-    f.write('--input_path:' + args.input_path + "\n")
-    f.write('--target_path:' + args.target_path + "\n")
-    f.write("train_x.size():" + train_x.size())
-    f.write("train_y.size():" + train_y.size())
+    f.write('--epochs:' + str(args.epochs) + "\n")
+    f.write('--connections:' + str(args.connections) + "\n")
+    f.write('--hid:' + str(args.hid) + "\n")
+    f.write('--lrval:' + str(args.lrval) + "\n")
+    f.write('--type:' + str(args.type) + "\n")
+    f.write('--batch:' + str(args.batch) + "\n")
+    f.write('--input_path:' + str(args.input_path) + "\n")
+    f.write('--target_path:' + str(args.target_path) + "\n")
+    f.write("train_x.size():" + str(train_x.size()))
+    f.write("train_y.size():" + str(train_y.size()))
     f.write(str(net))
 
 split_crossentropy = networks.split_crossentropy() # test if I can import this from networks to clean up training script IF THIS FAILS JUST COPY AND PASTE FROM NETWORKS BACK IN
