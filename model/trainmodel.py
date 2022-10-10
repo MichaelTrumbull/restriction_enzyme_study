@@ -77,6 +77,8 @@ def save_losses(temp_hold_losses):
     with open(savepath + "/loss.txt", "w") as f: 
         f.write(str(temp_hold_losses))
 
+print(net)
+
 mse = nn.MSELoss()
 crossentropy = nn.CrossEntropyLoss()
 def split_crossentropy_motif1st2ndhalf(a, target):
