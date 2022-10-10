@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 m = nn.Softmax(dim=1)
-def split_softmax(a):
+def split_softmax_105(a): # NOTE: this is build for 105 length data that is 4 bit one hot and 9 bits at the end one hot.
     bases = a[:,0:105-9] # len=96 = 24 * 4base
     spaces = a[:,105-9:105] # 9 digit one hot representing number of spaces
     hold = m(bases[:,0:4]) # first base
@@ -11,7 +11,12 @@ def split_softmax(a):
         hold = torch.cat((hold, m(bases[:,(i+1)*4:(i+2)*4])), 1) #cat the soft max of a set of 4 onto hold
     hold = torch.cat((hold, m(spaces)), 1) #cat the soft max of the number of spaces
     return hold
-
+def split_softmax_136(a): # NOTE: this is build for 136 length data that is 4 bit one hot all the way
+    bases = a[:,:] # len=96 = 24 * 4base
+    hold = m(bases[:,0:4]) # first base
+    for i in range(int(len(bases[0])/4)):
+        hold = torch.cat((hold, m(bases[:,(i+1)*4:(i+2)*4])), 1) #cat the soft max of a set of 4 onto hold
+    return hold
 class Net_Linear(nn.Module):
     def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=512):
         super().__init__()
@@ -46,7 +51,8 @@ class Net_Linear(nn.Module):
         if self.hid > 8: x = F.relu(self.fc9(x))
         if self.hid > 9: x = F.relu(self.fc10(x))
         x = self.fc11(x)
-        return split_softmax(x)
+        if len(x[0])==136: return split_softmax_136(x)
+        return split_softmax_105(x)
 
 class Net_Conv1d_funnel(nn.Module): #uses conv3 to flatten the kernel feature back to 1
     def __init__(self, in_len, out_len, k=5, ft=2, con=256):
@@ -65,7 +71,7 @@ class Net_Conv1d_funnel(nn.Module): #uses conv3 to flatten the kernel feature ba
         x = x.squeeze()
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
-        return split_softmax(x)
+        return split_softmax_105(x)
 
 class Net_Conv1d_flatten(nn.Module): #uses torch.flatten(x, start_dim=1) to return to originial shape
     def __init__(self, in_len, out_len, k=5, ft=2, con=256):
@@ -83,7 +89,7 @@ class Net_Conv1d_flatten(nn.Module): #uses torch.flatten(x, start_dim=1) to retu
         x = torch.flatten(x, start_dim=1)
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
-        return split_softmax(x)
+        return split_softmax_105(x)
 
 class Net_Conv2d(nn.Module):
     def __init__(self, in_len1, in_len2, out_len, k=5, ft=2, con=256):
@@ -100,4 +106,4 @@ class Net_Conv2d(nn.Module):
         x = torch.flatten(x, start_dim=1)
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
-        return split_softmax(x)
+        return split_softmax_105(x)

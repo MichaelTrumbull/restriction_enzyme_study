@@ -125,13 +125,17 @@ for epoch in range(EPOCHS):
         outputs = net(batch_x)
         print('outputs.size()',outputs.size())
         if args.mse:
+            print('running mse')
             loss = mse(outputs, batch_y)
         elif args.crossent:
+            print('running basic crossent')
             print('batch_y.size()',batch_y.size())
             loss = crossentropy(outputs, batch_y)
         elif met_mot: 
+            print('running split cross ent met mot')
             loss = split_crossentropy_met_mot(outputs, batch_y)
         else:
+            print('running split cross ent motifs 1st 2nd half')
             loss = split_crossentropy_motif1st2ndhalf(outputs, batch_y)
         loss.backward()
         optimizer.step()
