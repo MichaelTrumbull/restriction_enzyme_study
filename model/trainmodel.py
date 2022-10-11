@@ -154,9 +154,12 @@ with open(savepath + "/epochloss.txt", "w") as f:
 #torch.save(net.state_dict(), run_name + ".statedict" )
 
 import matplotlib.pyplot as plt
+plt.figure(0)
 plt.plot(hold_losses)
 plt.title('b' + str(args.batch) + 'c' + str(args.connections) + 'h' + str(args.hid) + 'target' + str(args.target_path))
 plt.savefig(savepath + "/loss.png")
+
+plt.figure(1)
 plt.plot(hold_losses_epoch)
 plt.title('epochs:b' + str(args.batch) + 'c' + str(args.connections) + 'h' + str(args.hid) + 'target' + str(args.target_path))
 plt.savefig(savepath + "/epochloss.png")
