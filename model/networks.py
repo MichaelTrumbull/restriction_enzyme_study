@@ -26,7 +26,7 @@ class Net_Linear(nn.Module):
         self.hid = hidden_layers
         self.con = connections_between_layers
         
-        if self.o != 105 or self.o != 136: 
+        if self.o != 105 and self.o != 136: 
             print('WARNING: output size is not 105 or 136. Final activation layer does not support this')
             print('len(self.o):', self.o)
 
