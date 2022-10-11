@@ -34,11 +34,6 @@ hid = args.hid
 con = args.connections
 lrval = args.lrval
 
-if args.target_path == "data/metalation_motifs_onehot_pad.pt": ##### !!! INSTEAD of this just test what the len of the target is. 105 or 136...
-    met_mot = True 
-else:
-    met_mot = False #
-
 run_name = datetime.now().strftime("%m-%d-%H-%M") + str(args.note)
 savepath = "runs/" + run_name
 os.mkdir(savepath)
@@ -120,6 +115,7 @@ EPOCHS = args.epochs
 hold_losses = []
 hold_losses_epoch = []
 for epoch in range(EPOCHS):
+    print(epoch, '/', EPOCHS, end='\r')
     hold_losses_epoch.append(0)
     for i in range(0, len(train_x), BATCH_SIZE): 
         batch_x = train_x[i:i+BATCH_SIZE]
@@ -138,7 +134,7 @@ for epoch in range(EPOCHS):
         if args.lf == "basic_crossent": loss = crossentropy(outputs, batch_y)
         if args.lf == "crossent_105": loss = split_crossentropy_motif1st2ndhalf(outputs, batch_y)
         if args.lf == "crossent_136": loss = split_crossentropy_met_mot(outputs, batch_y)
-            
+        
         loss.backward()
         optimizer.step()
         hold_losses.append(loss.item()) # was originally outside batch loop...

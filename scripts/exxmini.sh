@@ -9,7 +9,7 @@ read gpu_number
 if [[ "$gpu_number" =~ ^[0-3]+$ ]]
 then
   echo Running trainmodel.py with CUDA:$gpu_number
-  export CUDA_VISIBLE_DEVICES=$gpu_number
+  export CUDA_VISIBLE_DEVICES=$gpu_number # WHY IS THE ACTUAL GPU IT IS RUN ON ALWAYS +1 FROM THIS NUM? INVESTIGATE
   python model/trainmodel.py --batch 3 --hid 1 --epochs 19 --connections 512 --lf mse_136 --note loss_func_tests
   python model/trainmodel.py --batch 3 --hid 1 --epochs 19 --connections 512 --lf basic_mse --note loss_func_tests
   python model/trainmodel.py --batch 3 --hid 1 --epochs 19 --connections 512 --lf basic_crossent --note loss_func_tests
