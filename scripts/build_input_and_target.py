@@ -33,9 +33,14 @@ import numpy as np
 import pandas as pd
 from Bio import SeqIO
 
-##################################################
-# Build input tensor from ESM-1b encoded seqeunces
-##################################################
+
+BUILD_msr_esm1b_33_flat_pad = False
+BUILD_Motif_1stHalf_Motif_2ndHalf_numN = False
+BUILD_metalation_motifs_onehot_pad = False
+
+################################################################################################
+# Setting up ordered dictionary of protien names from M,R,S, and Target. Only 600 / 821 are used
+################################################################################################
 
 protien_names = {'m':[],'r':[],'s':[],'target':[]}
 for seq_record in SeqIO.parse("raw_data/Type_I_M_subunit_genes_Protein_g_clean_sorted.faa", "fasta"):
@@ -75,6 +80,10 @@ for i, name_from_m in enumerate(protien_names['m']):
                 elif  name in protien_names['target']:
                     protien_names_ordered_filtered[i] = ["M." + name + ".pt", name + ".pt", "S1." + name + ".pt", name ] # M. / _ / S1. / _
 
+
+##################################################
+# Build input tensor from ESM-1b encoded seqeunces
+##################################################
 INPUT_DIRS_1 = [ "temp_data/m1split/", "temp_data/r1split/", "temp_data/s1split/"]
 INPUT_DIRS_2 = [ "temp_data/m2split/", "temp_data/r2split/", "temp_data/s2split/" ]
 
@@ -84,40 +93,42 @@ def load_tensor(directory):
     tensor_flat = torch.flatten(tensor_2d)
     return tensor_flat
 
-list_combined_1d_tensors = []
-for i in range(600):
-    hold_flat_tensor_single_protien = [] # will store the 1d tensor from m (m1 and maybe m2), then r, then s. 
-    for mrst_index, (dir1, dir2) in enumerate(zip(INPUT_DIRS_1, INPUT_DIRS_2)):
-        tensor_1 = load_tensor(dir1 + protien_names_ordered_filtered[i][mrst_index])
-        if os.path.isfile(dir2 + protien_names_ordered_filtered[i][mrst_index]): # if this seq was too large it will have a tensor (probably smaller) in the second file
-            tensor_2 = load_tensor(dir2 + protien_names_ordered_filtered[i][mrst_index])
-            combined_tensor = torch.cat( (tensor_1, tensor_2) )
-        else:
-            combined_tensor = tensor_1 # If there is no tensor in the second file then we only need to load the first tensor
-        hold_flat_tensor_single_protien.append(combined_tensor)
-    list_combined_1d_tensors.append( torch.cat( ( hold_flat_tensor_single_protien[0], hold_flat_tensor_single_protien[1], hold_flat_tensor_single_protien[2] ) ) )
 
-#### get padding size
-len_list = []
-for list in list_combined_1d_tensors:
-    len_list.append(len(list))
-max_len_val = max(len_list)
+if BUILD_msr_esm1b_33_flat_pad:
+    list_combined_1d_tensors = []
+    for i in range(600):
+        hold_flat_tensor_single_protien = [] # will store the 1d tensor from m (m1 and maybe m2), then r, then s. 
+        for mrst_index, (dir1, dir2) in enumerate(zip(INPUT_DIRS_1, INPUT_DIRS_2)):
+            tensor_1 = load_tensor(dir1 + protien_names_ordered_filtered[i][mrst_index])
+            if os.path.isfile(dir2 + protien_names_ordered_filtered[i][mrst_index]): # if this seq was too large it will have a tensor (probably smaller) in the second file
+                tensor_2 = load_tensor(dir2 + protien_names_ordered_filtered[i][mrst_index])
+                combined_tensor = torch.cat( (tensor_1, tensor_2) )
+            else:
+                combined_tensor = tensor_1 # If there is no tensor in the second file then we only need to load the first tensor
+            hold_flat_tensor_single_protien.append(combined_tensor)
+        list_combined_1d_tensors.append( torch.cat( ( hold_flat_tensor_single_protien[0], hold_flat_tensor_single_protien[1], hold_flat_tensor_single_protien[2] ) ) )
 
-#### PAD
+    #### get padding size
+    len_list = []
+    for list in list_combined_1d_tensors:
+        len_list.append(len(list))
+    max_len_val = max(len_list)
 
-list_combined_1d_tensors_padded = []
-for i, line in enumerate(list_combined_1d_tensors):
-    #list_combined_1d_tensors_padded.append( F.pad(list_combined_1d_tensors[i], ( max_len_val-len(line), 0), "constant" ) )
-    list_combined_1d_tensors_padded.append( F.pad(list_combined_1d_tensors[i], ( 0, max_len_val-len(line)), "constant" ) )
+    #### PAD
 
-#### build list of tensors into single torch tensor
-print("torch stacking the list of tensors into single tensor")
-input_data = torch.stack(list_combined_1d_tensors_padded)
+    list_combined_1d_tensors_padded = []
+    for i, line in enumerate(list_combined_1d_tensors):
+        #list_combined_1d_tensors_padded.append( F.pad(list_combined_1d_tensors[i], ( max_len_val-len(line), 0), "constant" ) )
+        list_combined_1d_tensors_padded.append( F.pad(list_combined_1d_tensors[i], ( 0, max_len_val-len(line)), "constant" ) )
 
-print("data.size()", input_data.size())
+    #### build list of tensors into single torch tensor
+    print("torch stacking the list of tensors into single tensor")
+    input_data = torch.stack(list_combined_1d_tensors_padded)
 
-print('saving')
-torch.save(input_data, "data/msr-esm1b-33-flat-pad.pt")
+    print("data.size()", input_data.size())
+
+    print('saving')
+    torch.save(input_data, "data/msr-esm1b-33-flat-pad.pt")
 
 ########################################################################################################################################################
 # Build target tensor. Ording dictated from protien_names_ordered_filtered. Pull data from metadata_600.csv and use Motif_1stHalf,Motif_2ndHalf, as data
@@ -125,144 +136,147 @@ torch.save(input_data, "data/msr-esm1b-33-flat-pad.pt")
 
 motifs_pd = pd.read_csv("raw_data/metadata_600.csv")
 df = motifs_pd
+if BUILD_Motif_1stHalf_Motif_2ndHalf_numN:
+    # set up directory of how each symbol connects to ACGT: http://www.hgmd.cf.ac.uk/docs/nuc_lett.html
+    # mapping 'N': [1,1,1,1] because it should accept any base target. Could be [0,0,0,0] because this is just padding...
+    bas4_dict = {
+        'A': [1,0,0,0], 'C': [0,1,0,0], 'G': [0,0,1,0], 'T': [0,0,0,1],
+        'R': [1,0,1,0], 'Y': [0,1,0,1], 'K': [0,0,1,1], 'M': [1,1,0,0], 'S': [0,1,1,0], 'W': [1,0,0,1],
+        'B': [0,1,1,1], 'D': [1,0,1,1], 'H': [1,1,0,1], 'V': [1,1,1,0], 'N': [1,1,1,1] 
+    }
 
-# set up directory of how each symbol connects to ACGT: http://www.hgmd.cf.ac.uk/docs/nuc_lett.html
-# mapping 'N': [1,1,1,1] because it should accept any base target. Could be [0,0,0,0] because this is just padding...
-bas4_dict = {
-    'A': [1,0,0,0], 'C': [0,1,0,0], 'G': [0,0,1,0], 'T': [0,0,0,1],
-    'R': [1,0,1,0], 'Y': [0,1,0,1], 'K': [0,0,1,1], 'M': [1,1,0,0], 'S': [0,1,1,0], 'W': [1,0,0,1],
-    'B': [0,1,1,1], 'D': [1,0,1,1], 'H': [1,1,0,1], 'V': [1,1,1,0], 'N': [1,1,1,1] 
-}
+    def str_to_base4code(string):
+        coded = []
+        for char in string:
+            coded = coded + bas4_dict[char]
+        return coded
 
-def str_to_base4code(string):
-    coded = []
-    for char in string:
-        coded = coded + bas4_dict[char]
-    return coded
+    # functions for building list of encoded strings and padding the lists
+    def one_hot(data_1d):
+        data_1d_encoded = []
+        for string in data_1d:
+            data_1d_encoded.append(str_to_base4code(string))
+        return data_1d_encoded
 
-# functions for building list of encoded strings and padding the lists
-def one_hot(data_1d):
-    data_1d_encoded = []
-    for string in data_1d:
-        data_1d_encoded.append(str_to_base4code(string))
-    return data_1d_encoded
+    def pad(data_1d):
+        max_length = len(max(data_1d, key=len))
+        padded_data = []
+        for i, line in enumerate(data_1d):
+            padded_data.append(line + [0]*(max_length - len(line)))
+        return padded_data
 
-def pad(data_1d):
-    max_length = len(max(data_1d, key=len))
-    padded_data = []
-    for i, line in enumerate(data_1d):
-        padded_data.append(line + [0]*(max_length - len(line)))
-    return padded_data
+    Motif_1stHalf = []
+    Motif_2ndHalf = []
+    for i in range(600):
+        Motif_1stHalf.append( motifs_pd.loc[motifs_pd['RMS_Name'] == protien_names_ordered_filtered[i][3]]['Motif_1stHalf'].tolist()[0] )
+        Motif_2ndHalf.append( motifs_pd.loc[motifs_pd['RMS_Name'] == protien_names_ordered_filtered[i][3]]['Motif_2ndHalf'].tolist()[0] )
+    ###### transitioning from pandas dataframe to list of the feature we want
+    motif11 = []#first half, left of /
+    motif12 = []#first half, right of /
+    for line in Motif_1stHalf:
+        motif11.append(line.rsplit('/')[0])
+        try:
+            motif12.append(line.rsplit('/')[1])
+        except:
+            motif12.append('')
+            print(line, " has no slash 1")
+    motif21 = []
+    motif22 = []
 
-Motif_1stHalf = []
-Motif_2ndHalf = []
-for i in range(600):
-    Motif_1stHalf.append( motifs_pd.loc[motifs_pd['RMS_Name'] == protien_names_ordered_filtered[i][3]]['Motif_1stHalf'].tolist()[0] )
-    Motif_2ndHalf.append( motifs_pd.loc[motifs_pd['RMS_Name'] == protien_names_ordered_filtered[i][3]]['Motif_2ndHalf'].tolist()[0] )
-###### transitioning from pandas dataframe to list of the feature we want
-motif11 = []#first half, left of /
-motif12 = []#first half, right of /
-for line in Motif_1stHalf:
-    motif11.append(line.rsplit('/')[0])
-    try:
-        motif12.append(line.rsplit('/')[1])
-    except:
-        motif12.append('')
-        print(line, " has no slash 1")
-motif21 = []
-motif22 = []
+    for line in Motif_2ndHalf:
+        motif21.append(line.rsplit('/')[0])
+        try: # sometimes there is no / present
+            motif22.append(line.rsplit('/')[1])
+        except:
+            motif22.append('')
+            #print(line, " has no slash 2")
+    ###### encoding and then padding each list sequences
+    motif11 = one_hot(motif11)
+    motif11 = pad(motif11)
+    motif12 = one_hot(motif12)
+    motif12 = pad(motif12)
+    motif21 = one_hot(motif21)
+    motif21 = pad(motif21)
+    motif22 = one_hot(motif22)
+    motif22 = pad(motif22)
+    ###### one hot encode the number of Ns for the spacing
+    # compare 'N's on left / right half. double check they are even
+    same_on_both_sides = True
 
-for line in Motif_2ndHalf:
-    motif21.append(line.rsplit('/')[0])
-    try: # sometimes there is no / present
-        motif22.append(line.rsplit('/')[1])
-    except:
-        motif22.append('')
-        #print(line, " has no slash 2")
-###### encoding and then padding each list sequences
-motif11 = one_hot(motif11)
-motif11 = pad(motif11)
-motif12 = one_hot(motif12)
-motif12 = pad(motif12)
-motif21 = one_hot(motif21)
-motif21 = pad(motif21)
-motif22 = one_hot(motif22)
-motif22 = pad(motif22)
-###### one hot encode the number of Ns for the spacing
-# compare 'N's on left / right half. double check they are even
-same_on_both_sides = True
+    for line in motifs_pd['Methylation Motif']:
+        try:
+            a,b = line.split("/")
+            if int(a.count('N')) != int(b.count('N')):
+                same_on_both_sides = False
+        except:
+            pass
+    #print("Ns are same on both sides? ", same_on_both_sides)
 
-for line in motifs_pd['Methylation Motif']:
-    try:
-        a,b = line.split("/")
-        if int(a.count('N')) != int(b.count('N')):
-            same_on_both_sides = False
-    except:
-        pass
-#print("Ns are same on both sides? ", same_on_both_sides)
+    # Get number of Ns into a one hot
+    num_ns = []
+    for line in motifs_pd['Methylation Motif']:
+        num_ns.append(int(line.count('N')/2))
 
-# Get number of Ns into a one hot
-num_ns = []
-for line in motifs_pd['Methylation Motif']:
-    num_ns.append(int(line.count('N')/2))
+    num_ns_onehot = []
+    for n in num_ns:
+        num_ns_onehot.append([int(i) for i in np.eye(9)[n-2].tolist()])
 
-num_ns_onehot = []
-for n in num_ns:
-    num_ns_onehot.append([int(i) for i in np.eye(9)[n-2].tolist()])
+    # bring together one hot version of motif 1st half part 1, motif 1st half part 2, motif 2nd half part 1, motif 2nd half part 2, and number of spaces (n) 
+    motifs_onehot = []
+    for a, b, c, d, n in zip(motif11, motif12, motif21, motif22, num_ns_onehot):
+        motifs_onehot.append(a + b + c + d + n)
 
-# bring together one hot version of motif 1st half part 1, motif 1st half part 2, motif 2nd half part 1, motif 2nd half part 2, and number of spaces (n) 
-motifs_onehot = []
-for a, b, c, d, n in zip(motif11, motif12, motif21, motif22, num_ns_onehot):
-    motifs_onehot.append(a + b + c + d + n)
-
-torch.save(torch.FloatTensor(motifs_onehot), "data/Motif_1stHalf_Motif_2ndHalf_numN.pt")
+    torch.save(torch.FloatTensor(motifs_onehot), "data/Motif_1stHalf_Motif_2ndHalf_numN.pt")
 
 ########################################################################################################################################################
 # Build target tensor. Ording dictated from protien_names_ordered_filtered. Pull data from metadata_600.csv and use "Methylation Motif" as data
 ########################################################################################################################################################
-bas4_dict = {
-    'A': [1,0,0,0], 'C': [0,1,0,0], 'G': [0,0,1,0], 'T': [0,0,0,1],
-    'R': [1,0,1,0], 'Y': [0,1,0,1], 'K': [0,0,1,1], 'M': [1,1,0,0], 'S': [0,1,1,0], 'W': [1,0,0,1],
-    'B': [0,1,1,1], 'D': [1,0,1,1], 'H': [1,1,0,1], 'V': [1,1,1,0], 'N': [1,1,1,1] 
-}
-def str_to_base4code(string):
-    coded = []
-    for char in string:
-        coded = coded + bas4_dict[char]
-    return coded
-# functions for building list of encoded strings and padding the lists
-def one_hot(data_1d):
-    data_1d_encoded = []
-    for string in data_1d:
-        data_1d_encoded.append(str_to_base4code(string))
-    return data_1d_encoded
-def pad(data_1d):
-    max_length = len(max(data_1d, key=len))
-    padded_data = []
-    for i, line in enumerate(data_1d):
-        padded_data.append(line + [0]*(max_length - len(line)))
-    return padded_data
-df = pd.read_csv("raw_data/metadata_600.csv")
+if BUILD_metalation_motifs_onehot_pad:
+    bas4_dict = {
+        'A': [1,0,0,0], 'C': [0,1,0,0], 'G': [0,0,1,0], 'T': [0,0,0,1],
+        'R': [1,0,1,0], 'Y': [0,1,0,1], 'K': [0,0,1,1], 'M': [1,1,0,0], 'S': [0,1,1,0], 'W': [1,0,0,1],
+        'B': [0,1,1,1], 'D': [1,0,1,1], 'H': [1,1,0,1], 'V': [1,1,1,0], 'N': [1,1,1,1] 
+    }
+    def str_to_base4code(string):
+        coded = []
+        for char in string:
+            coded = coded + bas4_dict[char]
+        return coded
+    # functions for building list of encoded strings and padding the lists
+    def one_hot(data_1d):
+        data_1d_encoded = []
+        for string in data_1d:
+            data_1d_encoded.append(str_to_base4code(string))
+        return data_1d_encoded
+    def pad(data_1d):
+        max_length = len(max(data_1d, key=len))
+        padded_data = []
+        for i, line in enumerate(data_1d):
+            padded_data.append(line + [0]*(max_length - len(line)))
+        return padded_data
+    df = pd.read_csv("raw_data/metadata_600.csv")
 
-MethylationMotif = []
-for i in range(600):
-    MethylationMotif.append( df.loc[df['RMS_Name'] == protien_names_ordered_filtered[i][3]]['Methylation Motif'].tolist()[0] )
+    MethylationMotif = []
+    for i in range(600):
+        MethylationMotif.append( df.loc[df['RMS_Name'] == protien_names_ordered_filtered[i][3]]['Methylation Motif'].tolist()[0] )
 
-# we will split the data by "left / right" Data: CGANNNNNNNRTAG/CTAYNNNNNNNTCG
-left_list = []
-right_list = []
+    # we will split the data by "left / right" Data: CGANNNNNNNRTAG/CTAYNNNNNNNTCG
+    left_list = []
+    right_list = []
 
-for line in MethylationMotif:
-    try: left, right = line.rsplit('/')
-    except: left, right = line.rsplit('/')[0], '' # if there is no "/" then we will just fill "right" with ''
-    left_list.append(left)
-    right_list.append(right)
+    for line in MethylationMotif:
+        try: left, right = line.rsplit('/')
+        except: left, right = line.rsplit('/')[0], '' # if there is no "/" then we will just fill "right" with ''
+        left_list.append(left)
+        right_list.append(right)
 
-left_list_onehot_padded = pad(one_hot(left_list))
-right_list_onehot_padded = pad(one_hot(right_list))
+    left_list_onehot_padded = pad(one_hot(left_list))
+    right_list_onehot_padded = pad(one_hot(right_list))
 
-list_combined = []
-for l,f in zip(left_list_onehot_padded, right_list_onehot_padded): list_combined.append(l+f)
+    list_combined = []
+    for l,f in zip(left_list_onehot_padded, right_list_onehot_padded): list_combined.append(l+f)
 
-torch.save(torch.FloatTensor(list_combined), "data/metalation_motifs_onehot_pad.pt")
+    torch.save(torch.FloatTensor(list_combined), "data/metalation_motifs_onehot_pad.pt")
 
+#########################################################################
+# 
