@@ -41,7 +41,7 @@ if args.target_path == "data/metalation_motifs_onehot_pad.pt": ##### !!! INSTEAD
 else:
     met_mot = False #
 
-run_name = datetime.now().strftime("%m-%d-%H-%M")
+run_name = datetime.now().strftime("%m-%d-%H-%M") + str(args.note)
 savepath = "runs/" + run_name
 os.mkdir(savepath)
 
