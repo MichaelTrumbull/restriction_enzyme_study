@@ -382,7 +382,8 @@ if BUILD_motif1stHalf2ndHalf_numNbase10:
     for a, b, c, d, n in zip(motif11, motif12, motif21, motif22, num_ns_onehot):
         motifs_onehot.append(a + b + c + d + n)
 
-    torch.save(torch.FloatTensor(motifs_onehot), "data/Motif_1stHalf_Motif_2ndHalf_numN.pt")
+    # NOT DONE YET. SAVE IT ONCE THIS PART HAS BEEN MODIFIED
+    #torch.save(torch.FloatTensor(motifs_onehot), "data/Motif_1stHalf_Motif_2ndHalf_numN.pt")
 
 ## ###### ! DO THIS METHOD AGAIN BUT REORDER LEFT/RIGHT OF 1ST/2ND HALF SUCH THAT THEY ARE IN THE CORRECT ORDER
 if BUILD_motif1stHalf2ndHalf_ordered_numNbase10:
