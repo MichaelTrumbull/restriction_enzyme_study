@@ -19,10 +19,8 @@ parser.add_argument('--type', type=str, default="lin", help="network being used 
 parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
 parser.add_argument('--input_path', type=str, default="data/msr-esm1b-33-flat-pad.pt", help="location of input tensor for training")
 parser.add_argument('--target_path', type=str, default="data/metalation_motifs_onehot_pad.pt", help="location of input tensor for training")
-parser.add_argument('--crossent', action='store_true', help="Use the basic cross entropy loss function in this run.")
-parser.add_argument('--mse', action='store_true', help="Use mse loss func.")
-parser.add_argument('--mse_136', action='store_true', help="Use split mse loss func for 136 len data.")
-parser.add_argument('--loss_func',type=str,default='basic_crossent', choices=['basic_crossent', 'crossent_105', 'crossent_136', 'basic_mse', 'mse_136'])
+
+parser.add_argument('--lf',type=str,default='basic_crossent', choices=['basic_crossent', 'crossent_105', 'crossent_136', 'basic_mse', 'mse_136'], help="Loss function to be used")
 parser.add_argument('--note', type=str, default='', help="any details you want to save about the run?")
 
 args = parser.parse_args()
@@ -44,6 +42,8 @@ else:
 run_name = datetime.now().strftime("%m-%d-%H-%M") + str(args.note)
 savepath = "runs/" + run_name
 os.mkdir(savepath)
+    
+
 
 input_data_path = args.input_path
 input_data_path_2d = args.input_path #"../data/msr-esmb1.pt" # maybe get rid of this line and modify later code?
@@ -132,16 +132,13 @@ for epoch in range(EPOCHS):
 
         net.zero_grad()
         outputs = net(batch_x)
-        if args.mse:
-            loss = mse(outputs, batch_y)
-        if args.mse_136:
-            loss = split_mse_136(outputs, batch_y)
-        elif args.crossent:
-            loss = crossentropy(outputs, batch_y)
-        elif met_mot: 
-            loss = split_crossentropy_met_mot(outputs, batch_y)
-        else:
-            loss = split_crossentropy_motif1st2ndhalf(outputs, batch_y)
+
+        if args.lf == "basic_mse": loss = mse(outputs, batch_y)
+        if args.lf == "mse_136": loss = split_mse_136(outputs, batch_y)
+        if args.lf == "basic_crossent": loss = crossentropy(outputs, batch_y)
+        if args.lf == "crossent_105": loss = split_crossentropy_motif1st2ndhalf(outputs, batch_y)
+        if args.lf == "crossent_136": loss = split_crossentropy_met_mot(outputs, batch_y)
+            
         loss.backward()
         optimizer.step()
         hold_losses.append(loss.item()) # was originally outside batch loop...
