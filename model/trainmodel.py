@@ -22,7 +22,9 @@ parser.add_argument('--target_path', type=str, default="data/metalation_motifs_o
 parser.add_argument('--crossent', action='store_true', help="Use the basic cross entropy loss function in this run.")
 parser.add_argument('--mse', action='store_true', help="Use mse loss func.")
 parser.add_argument('--mse_136', action='store_true', help="Use split mse loss func for 136 len data.")
-parser.add_argument('--loss_func',type=str, choices=['a', 'b', 'c'])
+parser.add_argument('--loss_func',type=str,default='basic_crossent' choices=['basic_crossent', 'crossent_105', 'crossent_136', 'basic_mse', 'mse_136'])
+parser.add_argument('--note', type=str, help="any details you want to save about the run?")
+
 args = parser.parse_args()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
