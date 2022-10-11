@@ -10,8 +10,7 @@ if [[ "$gpu_number" =~ ^[0-3]+$ ]]
 then
   echo Running trainmodel.py with CUDA:$gpu_number
   export CUDA_VISIBLE_DEVICES=$gpu_number
-  python model/trainmodel.py --batch 3 --hid 1 --epochs 49 --connections 512
-  python model/trainmodel.py --batch 3 --hid 1 --epochs 49 --connections 512 --mse_136
+  python model/trainmodel.py --batch 3 --hid 1 --epochs 49 --connections 512 --mse_136 --note mse136run
 else
   echo CANCELLED
 fi
