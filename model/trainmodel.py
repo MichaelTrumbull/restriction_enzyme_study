@@ -52,9 +52,9 @@ train_y = torch.load(target_data_path)
 
 if args.type == "lin": net = networks.Net_Linear( len(train_x[0]), len(train_y[0]), hid, con).to(device=device)
 if args.type == "conv1d": net = networks.Net_Conv1d_flatten( len(train_x[0]), len(train_y[0]),k=10,ft=1,con=con ).to(device=device)
-if args.type == "conv2d": 
-    train_x = torch.load(input_data_path_2d).to(device=device) #might have memory issues
-    net = networks.Net_Conv2d( len(train_x[0]), len(train_x[0,0]), len(train_y[0]),k=10,ft=1,con=con ).to(device=device)
+#if args.type == "conv2d": 
+#    train_x = torch.load(input_data_path_2d).to(device=device) #might have memory issues
+#    net = networks.Net_Conv2d( len(train_x[0]), len(train_x[0,0]), len(train_y[0]),k=10,ft=1,con=con ).to(device=device)
 
 with open(savepath + "/setup.log", "w") as f: 
     f.write(run_name + "\n")

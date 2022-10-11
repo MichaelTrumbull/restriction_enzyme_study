@@ -25,6 +25,8 @@ class Net_Linear(nn.Module):
         self.o = output_size #len(train_y[0])
         self.hid = hidden_layers
         self.con = connections_between_layers
+        
+        if self.o != 105 or self.o != 136: print('WARNING: output size is not 105 or 136. Final activation layer does not support this')
 
         if self.hid > 0: self.fc1 = nn.Linear(self.i, self.con)
         if self.hid > 1: self.fc2 = nn.Linear(self.con, self.con)
