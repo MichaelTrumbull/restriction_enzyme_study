@@ -23,7 +23,7 @@ parser.add_argument('--crossent', action='store_true', help="Use the basic cross
 parser.add_argument('--mse', action='store_true', help="Use mse loss func.")
 parser.add_argument('--mse_136', action='store_true', help="Use split mse loss func for 136 len data.")
 parser.add_argument('--loss_func',type=str,default='basic_crossent', choices=['basic_crossent', 'crossent_105', 'crossent_136', 'basic_mse', 'mse_136'])
-parser.add_argument('--note', type=str, help="any details you want to save about the run?")
+parser.add_argument('--note', type=str, default='', help="any details you want to save about the run?")
 
 args = parser.parse_args()
 
@@ -61,6 +61,7 @@ if args.type == "conv1d": net = networks.Net_Conv1d_flatten( len(train_x[0]), le
 
 with open(savepath + "/setup.log", "w") as f: 
     f.write(run_name + "\n")
+    f.write("Note:" + str(args.note) + "\n")
     f.write('--epochs:' + str(args.epochs) + "\n")
     f.write('--connections:' + str(args.connections) + "\n")
     f.write('--hid:' + str(args.hid) + "\n")
