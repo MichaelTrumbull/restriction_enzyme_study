@@ -37,7 +37,7 @@ def pad_tensor_list(tensor_list):
         tensor_list_pad.append( torch.nn.functional.pad(tensor_list[i], ( 0, max_len-len(line)), "constant" ) )
     return tensor_list_pad
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cpu") #device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # had to remove for memory issued on exxmini
 model, alphabet = esm.pretrained.esm2_t36_3B_UR50D()
 model = model.to(device)
 batch_converter = alphabet.get_batch_converter()
