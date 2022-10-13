@@ -33,6 +33,11 @@ scripts/test_data.py
 
 ## Training
 Multiple networks are availible for training on with auto cuda detection. The differences between networks are in depth and shape but all are simple neural nets.
+### Data
+Training input and target data are built from the raw_data files. Typically, the input data uses Facebook's ESM protien language models and target data is one-hot encoded (sort of). The following variations are:
+- input_esm2_3B_layer33_1dseq_padlast_tokenrepresentation
+    - ESM2 (3B) inference is used on each sequence. Layer 33 is extracted from the model's activation. This layer is flattened to be a 1d tensor representing each seq. 
+- 
 ### HPC
 Slurm scripts are provided in `scripts/slurm_scripts`.
 Check which GPUs are available: `nvidia-smi`
