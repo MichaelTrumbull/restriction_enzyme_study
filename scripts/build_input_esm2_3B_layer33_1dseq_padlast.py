@@ -69,5 +69,6 @@ data_tokenrep = torch.stack(list_encoded_seqs_tokenrep_pad)
 data_seqrep = torch.stack(list_encoded_seqs_seqrep_pad)
 
 torch.save(data_tokenrep, 'data/input_esm2_3B_layer33_1dseq_padlast_tokenrep.pt')
+print('saved data/input_esm2_3B_layer33_1dseq_padlast_tokenrep.pt')
 torch.save(data_seqrep, 'data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt')
-
+print('saved input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt')
