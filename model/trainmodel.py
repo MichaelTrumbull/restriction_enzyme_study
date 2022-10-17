@@ -17,9 +17,8 @@ parser.add_argument('--hid', type=int, default=0, help="number of hidden linear 
 parser.add_argument('--lrval', type=float, default=0.001, help="lrval jump value during training")
 parser.add_argument('--type', type=str, default="lin", help="network being used (lin, conv1d, conv2d)")
 parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
-parser.add_argument('--input_path', type=str, default="data/msr-esm1b-33-flat-pad.pt", help="location of input tensor for training")
-parser.add_argument('--target_path', type=str, default="data/metalation_motifs_onehot_pad.pt", help="location of input tensor for training")
-
+parser.add_argument('--input_path', type=str, default='data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt', help="location of input tensor for training")
+parser.add_argument('--target_path', type=str, default="data/target_Methylation_Motif_padmiddle.pt", help="location of input tensor for training")
 parser.add_argument('--lf',type=str,default='basic_crossent', choices=['basic_crossent', 'crossent_105', 'crossent_136', 'basic_mse', 'mse_136'], help="Loss function to be used")
 parser.add_argument('--note', type=str, default='', help="any details you want to save about the run?")
 
@@ -108,6 +107,14 @@ def split_mse_136(a, target): # this should be used if target data is from "data
         temp =  mse(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
         hold.append( temp ) #cat the soft max of a set of 4 onto hold
     return torch.tensor( sum(hold)/34 , requires_grad=True).to(device=device) # , dtype=torch.float )
+
+
+#########################
+### !!! Need more loss functions for new in/target data. until then use standard mse or cross ent.
+#########################
+
+
+
 optimizer = optim.Adam(net.parameters(), lr=lrval)
 BATCH_SIZE = args.batch
 EPOCHS = args.epochs

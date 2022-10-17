@@ -40,7 +40,7 @@ for line in padded:
 ### NOTE the issue with counting the number of Ns is there are Ns present between regular residues.
 ### this means i would need to remove the corresponding start and end of each sequence given
 ### to be able to count the number of Ns that are only for spacing. 
-full = df['Methylation Motif'].tolist()
+methylationmotif = df['Methylation Motif'].tolist()
 
 # Test if both sites have the same spacing of Ns. 
 '''
@@ -61,6 +61,14 @@ for i, line in enumerate(full):
         print(l[ len( first[i].split('/')[0] ) : -len(first[i].split('/')[1]) ])
         print(left_ns, right_ns)
 '''# Both sites always have the same number of N spacing
-# count Ns assuming we only need to count left of the /
-for i, line in enumerate(full):
-    l = line.split('/')[0]
+
+# Sol: Count all Ns. Subtract Ns present in the 1stHalf/2ndHalf characters. Now that we have all the Ns only in the middle spacing, we can divide by two for the two different sites.
+for i, line in enumerate(methylationmotif):
+    if methylationmotif[i].count('/') == 0:
+        ns = methylationmotif[i].count('N') - first[i].count('N')
+    else:
+        ns = methylationmotif[i].count('N') - first[i].count('N') - second[i].count('N')
+    ns = ns/2
+    onehot_list[i].append(ns)
+    
+print(onehot_list[0])
