@@ -71,4 +71,4 @@ for i, line in enumerate(methylationmotif):
     ns = ns/2
     onehot_list[i].append(ns)
     
-print(onehot_list[0])
+torch.save(torch.FloatTensor(onehot_list), "data/target_motif1stHalf2ndHalf_padmiddle_numN.pt")
