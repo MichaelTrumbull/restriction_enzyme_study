@@ -1,14 +1,21 @@
 source lib/conda/bin/activate
 conda activate metal_motifs_env
 
-export CUDA_VISIBLE_DEVICES=0
-python model/trainmodel.py --batch 15 --epochs 29
-python model/trainmodel.py --batch 30 --epochs 29
-python model/trainmodel.py --batch 15 --hid 1 --crossent --epochs 29
-python model/trainmodel.py --batch 30 --hid 1 --epochs 29
-python model/trainmodel.py --batch 15 --hid 2 --crossent --epochs 29
-python model/trainmodel.py --batch 30 --hid 2 --epochs 29
-python model/trainmodel.py --batch 15 --crossent --epochs 29
-python model/trainmodel.py --batch 15 --mse --epochs 29
-python model/trainmodel.py --batch 30 --crossent --epochs 29
-python model/trainmodel.py --batch 15 --mse_136 --epochs 29
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 15 --epochs 19 --hid 0 --input_path data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt --target_path data/target_Methylation_Motif_padmiddle.pt
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 3 --epochs 19 --hid 1 --input_path data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt --target_path data/target_Methylation_Motif_padmiddle.pt
+
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 15 --epochs 19 --hid 0 --input_path data/input_esm2_3B_layer33_1dseq_padlast_tokenrep.pt --target_path data/target_Methylation_Motif_padmiddle.pt
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 3 --epochs 19 --hid 1 --input_path data/input_esm2_3B_layer33_1dseq_padlast_tokenrep.pt --target_path data/target_Methylation_Motif_padmiddle.pt
+
+
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 15 --epochs 19 --hid 0 --input_path data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt --target_path data/target_Methylation_Motif_padlast.pt
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 3 --epochs 19 --hid 1 --input_path data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt --target_path data/target_Methylation_Motif_padlast.pt
+
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 15 --epochs 19 --hid 0 --input_path data/input_esm2_3B_layer33_1dseq_padlast_tokenrep.pt --target_path data/target_Methylation_Motif_padlast.pt
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 3 --epochs 19 --hid 1 --input_path data/input_esm2_3B_layer33_1dseq_padlast_tokenrep.pt --target_path data/target_Methylation_Motif_padlast.pt
+
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 15 --epochs 19 --hid 0 --input_path data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt --target_path data/target_motif1stHalf2ndHalf_padmiddle_numN.pt
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 3 --epochs 19 --hid 1 --input_path data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt --target_path data/target_motif1stHalf2ndHalf_padmiddle_numN.pt
+
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 15 --epochs 19 --hid 0 --input_path data/input_esm2_3B_layer33_1dseq_padlast_tokenrep.pt --target_path data/target_motif1stHalf2ndHalf_padmiddle_numN.pt
+CUDA_VISIBLE_DEVICES=0 python model/trainmodel.py --batch 3 --epochs 19 --hid 1 --input_path data/input_esm2_3B_layer33_1dseq_padlast_tokenrep.pt --target_path data/target_motif1stHalf2ndHalf_padmiddle_numN.pt

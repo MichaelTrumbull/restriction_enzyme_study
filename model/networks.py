@@ -56,7 +56,8 @@ class Net_Linear(nn.Module):
         if self.hid > 9: x = F.relu(self.fc10(x))
         x = self.fc11(x)
         if len(x[0])==136: return split_softmax_136(x)
-        return split_softmax_105(x)
+        if len(x[0])==105: return split_softmax_105(x)
+        return m(x)
 
 class Net_Conv1d_funnel(nn.Module): #uses conv3 to flatten the kernel feature back to 1
     def __init__(self, in_len, out_len, k=5, ft=2, con=256):

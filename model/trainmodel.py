@@ -19,7 +19,7 @@ parser.add_argument('--type', type=str, default="lin", help="network being used 
 parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
 parser.add_argument('--input_path', type=str, default='data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt', help="location of input tensor for training")
 parser.add_argument('--target_path', type=str, default="data/target_Methylation_Motif_padmiddle.pt", help="location of input tensor for training")
-parser.add_argument('--lf',type=str,default='basic_crossent', choices=['basic_crossent', 'crossent_105', 'crossent_136', 'basic_mse', 'mse_136'], help="Loss function to be used")
+parser.add_argument('--lf',type=str,default='basic_mse', choices=['basic_crossent', 'crossent_105', 'crossent_136', 'basic_mse', 'mse_136'], help="Loss function to be used")
 parser.add_argument('--note', type=str, default='', help="any details you want to save about the run?")
 
 args = parser.parse_args()
