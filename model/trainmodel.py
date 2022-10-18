@@ -33,7 +33,8 @@ hid = args.hid
 con = args.connections
 lrval = args.lrval
 
-run_name = datetime.now().strftime("%m-%d-%H-%M") + str(args.note)
+
+run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f") + str(args.note)
 savepath = "runs/" + run_name
 os.mkdir(savepath)
     
@@ -66,7 +67,6 @@ with open(savepath + "/setup.log", "w") as f:
     f.write('--target_path:' + str(args.target_path) + "\n")
     f.write("train_x.size():" + str(train_x.size()) + "\n")
     f.write("train_y.size():" + str(train_y.size()) + "\n")
-    f.write("crossent:" + str(args.crossent) + "\n")
     f.write(str(net) + "\n")
 
 def save_losses(temp_hold_losses):
