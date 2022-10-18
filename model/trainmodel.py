@@ -66,7 +66,6 @@ with open(savepath + "/setup.log", "w") as f:
     f.write('--target_path:' + str(args.target_path) + "\n")
     f.write("train_x.size():" + str(train_x.size()) + "\n")
     f.write("train_y.size():" + str(train_y.size()) + "\n")
-    f.write("met_mot:" + str(met_mot) + "\n")
     f.write("crossent:" + str(args.crossent) + "\n")
     f.write(str(net) + "\n")
 
