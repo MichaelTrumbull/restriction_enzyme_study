@@ -1,4 +1,4 @@
-name: metal_motifs_env
+name: met_motifs_venv
 channels:
   - conda-forge
   - bioconda
