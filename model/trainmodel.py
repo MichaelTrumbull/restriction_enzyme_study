@@ -9,6 +9,7 @@ import os
 
 # ! maybe put all of this in functions. Utilize if __name__ = "main":
 
+groupname = "LongRunESM2Builds"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=9, help="integer value of number of epochs to run for")
@@ -35,7 +36,7 @@ lrval = args.lrval
 
 
 run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f") + str(args.note)
-savepath = "runs/" + run_name
+savepath = "runs/" + run_name + groupname
 os.mkdir(savepath)
     
 
