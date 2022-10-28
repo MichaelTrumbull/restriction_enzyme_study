@@ -48,3 +48,9 @@ for l,r in zip(left,right):
     padded_onehot_seqs.append(l+r)
 
 torch.save(torch.FloatTensor(padded_onehot_seqs), "data/target_Methylation_Motif_padmiddle.pt")
+
+'''
+ mmpadmid = torch.load('target_Methylation_Motif_padmiddle.pt')
+ mmpadmid.size()
+torch.Size([600, 136])
+'''

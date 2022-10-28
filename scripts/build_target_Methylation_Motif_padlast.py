@@ -32,3 +32,8 @@ for line in onehot_seqs:
 
 torch.save(torch.FloatTensor(padded_onehot_seqs), "data/target_Methylation_Motif_padlast.pt")
 
+'''
+ mmpadlast = torch.load('target_Methylation_Motif_padlast.pt')
+ mmpadlast.size()
+torch.Size([600, 140])
+'''
