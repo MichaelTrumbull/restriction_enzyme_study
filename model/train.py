@@ -32,7 +32,7 @@ args = parser.parse_args()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f") + str(args.note)
+run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f")
 savepath = "runs/" + run_name + rungroup
 os.mkdir(savepath)
 
