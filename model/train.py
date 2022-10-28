@@ -58,7 +58,7 @@ with open(savepath + "/setup.log", "w") as f:
 
 
 softmax = nn.Softmax(dim=1)
-relu = nn.ReLU(dim=1)
+relu = nn.ReLU()
 '''
 def split_softmax_105(a): # NOTE: this is build for 105 length data that is 4 bit one hot and 9 bits at the end one hot.
     bases = a[:,0:105-9] # len=96 = 24 * 4base
