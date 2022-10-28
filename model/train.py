@@ -10,7 +10,6 @@ import argparse
 from datetime import datetime
 import os
 
-from symbol import pass_stmt
 
 rungroup = "LongRunESM2Builds2"
 
@@ -126,9 +125,7 @@ class Net_Linear(nn.Module):
         if self.hid > 8: x = F.relu(self.fc9(x))
         if self.hid > 9: x = F.relu(self.fc10(x))
         x = self.fc11(x)
-        if len(x[0])==136: return split_softmax_136(x)
-        if len(x[0])==105: return split_softmax_105(x)
-        return m(x)
+        return split_softmax(x)
 
 
 net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections).to(device=device)
