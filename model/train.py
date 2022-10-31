@@ -10,48 +10,7 @@ import argparse
 from datetime import datetime
 import os
 
-
-rungroup = "TestlossfunTesthid"
-
-################################################################################################################################################################################
-# Setup block
-################################################################################################################################################################################
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--epochs', type=int, default=9, help="integer value of number of epochs to run for")
-parser.add_argument('--connections', type=int, default=256, help="number of connections between nodes in linear layers")
-parser.add_argument('--hid', type=int, default=0, help="number of hidden linear layers in the network")
-parser.add_argument('--lrval', type=float, default=0.001, help="lrval jump value during training")
-parser.add_argument('--type', type=str, default="lin", help="network being used (lin, conv1d, conv2d)")
-parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
-parser.add_argument('--input_path', type=str, default='data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt', help="location of input tensor for training")
-parser.add_argument('--target_path', type=str, default="data/target_Methylation_Motif_padmiddle.pt", help="location of input tensor for training")
-parser.add_argument('--lf',type=str,default='mse', choices=['crossent', 'split_crossent', 'mse', 'split_mse'], help="Loss function to be used")
-
-args = parser.parse_args()
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f")
-savepath = "runs/" + run_name + rungroup
-os.mkdir(savepath)
-
-train_x = torch.load(args.input_path)
-train_y = torch.load(args.target_path)
-
-with open(savepath + "/setup.log", "w") as f: 
-    f.write(run_name + "\n")
-    f.write('--epochs:' + str(args.epochs) + "\n")
-    f.write('--connections:' + str(args.connections) + "\n")
-    f.write('--hid:' + str(args.hid) + "\n")
-    f.write('--lrval:' + str(args.lrval) + "\n")
-    f.write('--type:' + str(args.type) + "\n")
-    f.write('--batch:' + str(args.batch) + "\n")
-    f.write('--input_path:' + str(args.input_path) + "\n")
-    f.write('--target_path:' + str(args.target_path) + "\n")
-    f.write('--lf:' + str(args.lf) + "\n")
-    f.write("train_x.size():" + str(train_x.size()) + "\n")
-    f.write("train_y.size():" + str(train_y.size()) + "\n")
 
 ################################################################################################################################################################################
 # Network block
@@ -129,8 +88,6 @@ class Net_Linear(nn.Module):
         return split_softmax(x)
 
 
-net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections).to(device=device)
-
 ################################################################################################################################################################################
 # Training functions block
 ################################################################################################################################################################################
@@ -139,7 +96,7 @@ net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections).
 mse = nn.MSELoss()
 crossentropy = nn.CrossEntropyLoss()
 def split_crossentropy(a,target):
-    if len(a[0]) == 140 or len(a[0]) == 136:
+    if len(a[0]) == 140 or len(a[0]) == 136 or len(a[0]) == 8:
         bases = a[:,:] # All are bases in this 136 bit encoding. 
         target_bases = target[:,:] # All are bases. There are no 'spaces' accounted for at the end
         hold = []
@@ -147,7 +104,7 @@ def split_crossentropy(a,target):
         for i in range(int(len(bases[0])/4) - 1):
             temp =  crossentropy(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
             hold.append( temp ) #cat the soft max of a set of 4 onto hold
-        return torch.tensor( sum(hold)/34 , requires_grad=True).to(device=device) # , dtype=torch.float )
+        return torch.tensor( sum(hold)/34).to(device=device)# , requires_grad=True).to(device=device) # , dtype=torch.float )
     if len(a[0]) == 97:
         bases = a[:,0:96] # len=96 = 24 * 4base
         target_bases = target[:,0:96]
@@ -159,9 +116,10 @@ def split_crossentropy(a,target):
             temp =  crossentropy(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
             hold.append( temp ) #cat the soft max of a set of 4 onto hold
         hold.append( crossentropy(spaces, target_spaces).item() ) #cat the soft max of the number of spaces
-        return torch.tensor( sum(hold)/25 , requires_grad=True).to(device=device) # , dtype=torch.float )
+        return torch.tensor( sum(hold)/25).to(device=device)# , requires_grad=True).to(device=device) # , dtype=torch.float )
+    print('ERROR: split_crossentropy')
 def split_mse(a,target):
-    if len(a[0]) == 140 or len(a[0]) == 136:
+    if len(a[0]) == 140 or len(a[0]) == 136 or len(a[0]) == 8: #len 8 is used for testing
         bases = a[:,:] # All are bases in this 136 bit encoding. 
         target_bases = target[:,:] # All are bases. There are no 'spaces' accounted for at the end
         hold = []
@@ -169,7 +127,7 @@ def split_mse(a,target):
         for i in range(int(len(bases[0])/4) - 1):
             temp =  mse(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
             hold.append( temp ) #cat the soft max of a set of 4 onto hold
-        return torch.tensor( sum(hold)/34 , requires_grad=True).to(device=device) # , dtype=torch.float )
+        return torch.tensor( sum(hold)/34).to(device=device)# , requires_grad=True).to(device=device) # , dtype=torch.float )
     if len(a[0]) == 97:
         bases = a[:,0:96] # len=96 = 24 * 4base
         target_bases = target[:,0:96]
@@ -181,7 +139,8 @@ def split_mse(a,target):
             temp =  mse(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
             hold.append( temp ) #cat the soft max of a set of 4 onto hold
         hold.append( mse(spaces, target_spaces).item() ) #cat the soft max of the number of spaces
-        return torch.tensor( sum(hold)/25 , requires_grad=True).to(device=device) # , dtype=torch.float )
+        return torch.tensor( sum(hold)/25).to(device=device)# , requires_grad=True).to(device=device) # , dtype=torch.float )
+    print('ERROR: split_mse')
 '''
 def split_crossentropy_motif1st2ndhalf(a, target):
     bases = a[:,0:105-9] # len=96 = 24 * 4base
@@ -216,62 +175,100 @@ def split_mse_136(a, target): # this should be used if target data is from "data
 '''
 
 
-### !!! Need more loss functions for new in/target data. until then use standard mse or cross ent.
-
 
 ################################################################################################################################################################################
-# Run block
+# Main
 ################################################################################################################################################################################
+if __name__ == "__main__":
+    ################################################################################################################################################################################
+    # Setup block
+    ################################################################################################################################################################################
+    rungroup = "TestlossfunTesthid"
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--epochs', type=int, default=9, help="integer value of number of epochs to run for")
+    parser.add_argument('--connections', type=int, default=256, help="number of connections between nodes in linear layers")
+    parser.add_argument('--hid', type=int, default=0, help="number of hidden linear layers in the network")
+    parser.add_argument('--lrval', type=float, default=0.001, help="lrval jump value during training")
+    parser.add_argument('--type', type=str, default="lin", help="network being used (lin, conv1d, conv2d)")
+    parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
+    parser.add_argument('--input_path', type=str, default='data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt', help="location of input tensor for training")
+    parser.add_argument('--target_path', type=str, default="data/target_Methylation_Motif_padmiddle.pt", help="location of input tensor for training")
+    parser.add_argument('--lf',type=str,default='mse', choices=['crossent', 'split_crossent', 'mse', 'split_mse'], help="Loss function to be used")
 
-optimizer = optim.Adam(net.parameters(), lr=args.lrval)
-BATCH_SIZE = args.batch
-EPOCHS = args.epochs
-
-hold_losses = []
-hold_losses_epoch = []
-for epoch in range(EPOCHS):
-    print(epoch, '/', EPOCHS, end='\r')
-    hold_losses_epoch.append(0)
-    for i in range(0, len(train_x), BATCH_SIZE): 
-        batch_x = train_x[i:i+BATCH_SIZE]
-        batch_y = train_y[i:i+BATCH_SIZE]
-
-        batch_x = batch_x.to(device=device)
-        batch_y = batch_y.to(device=device)
-
-        net.zero_grad()
-        outputs = net(batch_x)
-
-        if args.lf == "mse": loss = mse(outputs, batch_y)
-        if args.lf == "split_mse": loss = split_mse(outputs, batch_y)
-        if args.lf == "crossent": loss = crossentropy(outputs, batch_y)
-        if args.lf == "split_crossent": loss = split_crossentropy(outputs, batch_y)
-        
-        loss.backward()
-        optimizer.step()
-
-        hold_losses.append(loss.item()) # was originally outside batch loop...
-        hold_losses_epoch[epoch] = hold_losses_epoch[epoch] + loss.item()
+    args = parser.parse_args()
 
 
-################################################################################################################################################################################
-# Data saving block
-################################################################################################################################################################################
+    run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f")
+    savepath = "runs/" + run_name + rungroup
+    os.mkdir(savepath)
 
-with open(savepath + "/loss.txt", "w") as f: 
-    f.write(str(hold_losses))
-with open(savepath + "/epochloss.txt", "w") as f: 
-    f.write(str(hold_losses_epoch))
-#torch.save(net.state_dict(), run_name + ".statedict" )
+    train_x = torch.load(args.input_path)
+    train_y = torch.load(args.target_path)
 
-import matplotlib.pyplot as plt
-plt.figure(0)
-plt.plot(hold_losses)
-plt.title('b' + str(args.batch) + 'c' + str(args.connections) + 'h' + str(args.hid) + 'target' + str(args.target_path))
-plt.savefig(savepath + "/loss.png")
+    with open(savepath + "/setup.log", "w") as f: 
+        f.write(run_name + "\n")
+        f.write('--epochs:' + str(args.epochs) + "\n")
+        f.write('--connections:' + str(args.connections) + "\n")
+        f.write('--hid:' + str(args.hid) + "\n")
+        f.write('--lrval:' + str(args.lrval) + "\n")
+        f.write('--type:' + str(args.type) + "\n")
+        f.write('--batch:' + str(args.batch) + "\n")
+        f.write('--input_path:' + str(args.input_path) + "\n")
+        f.write('--target_path:' + str(args.target_path) + "\n")
+        f.write('--lf:' + str(args.lf) + "\n")
+        f.write("train_x.size():" + str(train_x.size()) + "\n")
+        f.write("train_y.size():" + str(train_y.size()) + "\n")
 
-plt.figure(1)
-plt.plot(hold_losses_epoch)
-plt.title('epochs:b' + str(args.batch) + 'c' + str(args.connections) + 'h' + str(args.hid) + 'target' + str(args.target_path))
-plt.savefig(savepath + "/epochloss.png")
-print('finished')
+
+    net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections).to(device=device)
+    optimizer = optim.Adam(net.parameters(), lr=args.lrval)
+    BATCH_SIZE = args.batch
+    EPOCHS = args.epochs
+
+    hold_losses = []
+    hold_losses_epoch = []
+    for epoch in range(EPOCHS):
+        print(epoch, '/', EPOCHS, end='\r')
+        hold_losses_epoch.append(0)
+        for i in range(0, len(train_x), BATCH_SIZE): 
+            batch_x = train_x[i:i+BATCH_SIZE]
+            batch_y = train_y[i:i+BATCH_SIZE]
+
+            batch_x = batch_x.to(device=device)
+            batch_y = batch_y.to(device=device)
+
+            net.zero_grad()
+            outputs = net(batch_x)
+
+            if args.lf == "mse": loss = mse(outputs, batch_y)
+            if args.lf == "split_mse": loss = split_mse(outputs, batch_y)
+            if args.lf == "crossent": loss = crossentropy(outputs, batch_y)
+            if args.lf == "split_crossent": loss = split_crossentropy(outputs, batch_y)
+            
+            loss.backward()
+            optimizer.step()
+
+            hold_losses.append(loss.item()) # was originally outside batch loop...
+            hold_losses_epoch[epoch] = hold_losses_epoch[epoch] + loss.item()
+    
+    ################################################################################################################################################################################
+    # Data saving block
+    ################################################################################################################################################################################
+
+    with open(savepath + "/loss.txt", "w") as f: 
+        f.write(str(hold_losses))
+    with open(savepath + "/epochloss.txt", "w") as f: 
+        f.write(str(hold_losses_epoch))
+    #torch.save(net.state_dict(), run_name + ".statedict" )
+
+    import matplotlib.pyplot as plt
+    plt.figure(0)
+    plt.plot(hold_losses)
+    plt.title('b' + str(args.batch) + 'c' + str(args.connections) + 'h' + str(args.hid) + 'target' + str(args.target_path))
+    plt.savefig(savepath + "/loss.png")
+
+    plt.figure(1)
+    plt.plot(hold_losses_epoch)
+    plt.title('epochs:b' + str(args.batch) + 'c' + str(args.connections) + 'h' + str(args.hid) + 'target' + str(args.target_path))
+    plt.savefig(savepath + "/epochloss.png")
+    print('finished')
