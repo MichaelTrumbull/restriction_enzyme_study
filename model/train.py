@@ -11,7 +11,7 @@ from datetime import datetime
 import os
 
 
-rungroup = "LongRunESM2Builds2"
+rungroup = "TestlossfunTesthid"
 
 ################################################################################################################################################################################
 # Setup block
