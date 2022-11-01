@@ -7,6 +7,10 @@ do
  for j in mse split_mse crossent split_crossent
  do
   echo "lossfunc $j"
-  CUDA_VISIBLE_DEVICES=0 python model/train.py --batch 5 --epochs 199 --hid $i --lf $j
+  for k in 0.01 0.001 0.0001 0.00001 0.000001
+  do
+   echo "lrval $k"
+   CUDA_VISIBLE_DEVICES=0 python model/train.py --batch 5 --epochs 250 --hid $i --lf $j --lrval $k
+  done
  done
 done

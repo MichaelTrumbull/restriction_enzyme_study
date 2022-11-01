@@ -104,7 +104,7 @@ def split_crossentropy(a,target):
         for i in range(int(len(bases[0])/4) - 1):
             temp =  crossentropy(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
             hold.append( temp ) #cat the soft max of a set of 4 onto hold
-        return torch.tensor( sum(hold)/34).to(device=device)# , requires_grad=True).to(device=device) # , dtype=torch.float )
+        return torch.tensor( sum(hold)/34 , requires_grad=True).to(device=device) # , dtype=torch.float )
     if len(a[0]) == 97:
         bases = a[:,0:96] # len=96 = 24 * 4base
         target_bases = target[:,0:96]
@@ -116,7 +116,7 @@ def split_crossentropy(a,target):
             temp =  crossentropy(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
             hold.append( temp ) #cat the soft max of a set of 4 onto hold
         hold.append( crossentropy(spaces, target_spaces).item() ) #cat the soft max of the number of spaces
-        return torch.tensor( sum(hold)/25).to(device=device)# , requires_grad=True).to(device=device) # , dtype=torch.float )
+        return torch.tensor( sum(hold)/25 , requires_grad=True).to(device=device) # , dtype=torch.float )
     print('ERROR: split_crossentropy')
 def split_mse(a,target):
     if len(a[0]) == 140 or len(a[0]) == 136 or len(a[0]) == 8: #len 8 is used for testing
@@ -127,7 +127,7 @@ def split_mse(a,target):
         for i in range(int(len(bases[0])/4) - 1):
             temp =  mse(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
             hold.append( temp ) #cat the soft max of a set of 4 onto hold
-        return torch.tensor( sum(hold)/34).to(device=device)# , requires_grad=True).to(device=device) # , dtype=torch.float )
+        return torch.tensor( sum(hold)/34 , requires_grad=True).to(device=device) # , dtype=torch.float )
     if len(a[0]) == 97:
         bases = a[:,0:96] # len=96 = 24 * 4base
         target_bases = target[:,0:96]
@@ -139,7 +139,7 @@ def split_mse(a,target):
             temp =  mse(bases[:,(i+1)*4:(i+2)*4], target_bases[:,(i+1)*4:(i+2)*4]).item()
             hold.append( temp ) #cat the soft max of a set of 4 onto hold
         hold.append( mse(spaces, target_spaces).item() ) #cat the soft max of the number of spaces
-        return torch.tensor( sum(hold)/25).to(device=device)# , requires_grad=True).to(device=device) # , dtype=torch.float )
+        return torch.tensor( sum(hold)/25 , requires_grad=True).to(device=device) # , dtype=torch.float )
     print('ERROR: split_mse')
 '''
 def split_crossentropy_motif1st2ndhalf(a, target):
