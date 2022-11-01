@@ -188,7 +188,7 @@ if __name__ == "__main__":
     ################################################################################################################################################################################
     # Setup block
     ################################################################################################################################################################################
-    rungroup = "TestlossfunTesthid"
+    rungroup = "BigRunEverything_with_no_softmax"
     parser = argparse.ArgumentParser()
     parser.add_argument('--epochs', type=int, default=9, help="integer value of number of epochs to run for")
     parser.add_argument('--connections', type=int, default=256, help="number of connections between nodes in linear layers")
