@@ -12,6 +12,9 @@ import os
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
+use_softmax = False # try not using this in the final layer # https://discuss.pytorch.org/t/activation-function-for-last-layer/41151
+
 ################################################################################################################################################################################
 # Network block
 ################################################################################################################################################################################
@@ -36,7 +39,7 @@ def split_softmax_136(a): # NOTE: this is build for 136 length data that is 4 bi
     return hold
 '''
 def split_softmax(a):
-    if len(a[0]) == 140 or len(a[0]) == 136: #methylation_motif_(padlast *or* padmiddle) is 4bit coding only. So take softmax of each 4bit
+    if len(a[0]) == 140 or len(a[0]) == 136 or len(a[0]) == 8: #methylation_motif_(padlast *or* padmiddle) is 4bit coding only. So take softmax of each 4bit
         hold = softmax(a[:,0:4]) # first base
         for i in range(int(len(a[0])/4)):
             hold = torch.cat((hold, softmax(a[:,(i+1)*4:(i+2)*4])), 1) #cat the soft max of a set of 4 onto hold
@@ -85,7 +88,9 @@ class Net_Linear(nn.Module):
         if self.hid > 8: x = F.relu(self.fc9(x))
         if self.hid > 9: x = F.relu(self.fc10(x))
         x = self.fc11(x)
-        return split_softmax(x)
+        if use_softmax:
+            return split_softmax(x)
+        return x
 
 
 ################################################################################################################################################################################
@@ -216,6 +221,7 @@ if __name__ == "__main__":
         f.write('--input_path:' + str(args.input_path) + "\n")
         f.write('--target_path:' + str(args.target_path) + "\n")
         f.write('--lf:' + str(args.lf) + "\n")
+        f.write('--use_softmax:' + str(use_softmax) + "\n")
         f.write("train_x.size():" + str(train_x.size()) + "\n")
         f.write("train_y.size():" + str(train_y.size()) + "\n")
 
