@@ -222,6 +222,7 @@ if __name__ == "__main__":
         f.write('--target_path:' + str(args.target_path) + "\n")
         f.write('--lf:' + str(args.lf) + "\n")
         f.write('--use_softmax:' + str(use_softmax) + "\n")
+        f.write('--rungroup:' + rungroup + "\n")
         f.write("train_x.size():" + str(train_x.size()) + "\n")
         f.write("train_y.size():" + str(train_y.size()) + "\n")
 
