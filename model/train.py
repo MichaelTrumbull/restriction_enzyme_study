@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
 
     run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f")
-    savepath = "runs/" + run_name + rungroup
+    savepath = "runs/" + rungroup + "/" + run_name
     os.mkdir(savepath)
 
     train_x = torch.load(args.input_path)
