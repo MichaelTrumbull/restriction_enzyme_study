@@ -14,3 +14,4 @@ do
   done
  done
 done
+echo "BATCH SCRIPT FINISHED"
