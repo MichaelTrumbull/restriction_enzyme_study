@@ -7,10 +7,10 @@ do
  for j in mse crossent
  do
   echo "lossfunc $j"
-  for k in 0.0001
+  for k in 256 512
   do
-   echo "lrval $k"
-   CUDA_VISIBLE_DEVICES=1 python model/train.py --batch 5 --epochs 999 --hid $i --lf $j --lrval $k
+   echo "con $k"
+   CUDA_VISIBLE_DEVICES=1 python model/train.py --batch 5 --epochs 999 --hid $i --lf $j --lrval 0.0001 --connections $k
   done
  done
 done
