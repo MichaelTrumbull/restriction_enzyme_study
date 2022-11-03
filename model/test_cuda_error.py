@@ -20,5 +20,5 @@ class Net_Linear(nn.Module):
 
 device = torch.device("cuda")
 
-net = Net_Linear( 7000, 300).to(device)
+net = Net_Linear( 100, 100).to(device)
 print('Finished')
