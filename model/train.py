@@ -204,6 +204,7 @@ if __name__ == "__main__":
 
     run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f")
     savepath = "runs/" + rungroup + "/" + run_name
+    if not os.path.exists("runs/" + rungroup): os.mkdir("runs/" + rungroup)
     os.mkdir(savepath)
 
     train_x = torch.load(args.input_path)
