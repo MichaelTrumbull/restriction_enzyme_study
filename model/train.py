@@ -13,8 +13,6 @@ import os
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-use_softmax = False # try not using this in the final layer # https://discuss.pytorch.org/t/activation-function-for-last-layer/41151
-
 ################################################################################################################################################################################
 # Network block
 ################################################################################################################################################################################
@@ -55,13 +53,14 @@ def split_softmax(a):
     print('ERROR: split_softmax failed. Wrong data size')
 
 class Net_Linear(nn.Module):
-    def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=256):
+    def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=256, use_softmax = False):
         super().__init__()
 
         self.i = input_size #len(train_x[0])
         self.o = output_size #len(train_y[0])
         self.hid = hidden_layers
         self.con = connections_between_layers
+        self.use_softmax = use_softmax
 
         if self.hid > 0: self.fc1 = nn.Linear(self.i, self.con)
         if self.hid > 1: self.fc2 = nn.Linear(self.con, self.con)
@@ -88,7 +87,7 @@ class Net_Linear(nn.Module):
         if self.hid > 8: x = F.relu(self.fc9(x))
         if self.hid > 9: x = F.relu(self.fc10(x))
         x = self.fc11(x)
-        if use_softmax:
+        if self.use_softmax:
             return split_softmax(x)
         return x
 
@@ -199,7 +198,7 @@ if __name__ == "__main__":
     parser.add_argument('--input_path', type=str, default='data/input_esm2_3B_layer33_1dseq_padlast_sequencerep.pt', help="location of input tensor for training")
     parser.add_argument('--target_path', type=str, default="data/target_Methylation_Motif_padmiddle.pt", help="location of input tensor for training")
     parser.add_argument('--lf',type=str,default='mse', choices=['crossent', 'split_crossent', 'mse', 'split_mse'], help="Loss function to be used")
-
+    parser.add_argument('--use_softmax',type=bool,default=False, help="Should split_softmax be applied at the final network layer?") # try not using this in the final layer https://discuss.pytorch.org/t/activation-function-for-last-layer/41151
     args = parser.parse_args()
 
 
@@ -221,13 +220,13 @@ if __name__ == "__main__":
         f.write('--input_path:' + str(args.input_path) + "\n")
         f.write('--target_path:' + str(args.target_path) + "\n")
         f.write('--lf:' + str(args.lf) + "\n")
-        f.write('--use_softmax:' + str(use_softmax) + "\n")
+        f.write('--use_softmax:' + str(args.use_softmax) + "\n")
         f.write('--rungroup:' + rungroup + "\n")
         f.write("train_x.size():" + str(train_x.size()) + "\n")
         f.write("train_y.size():" + str(train_y.size()) + "\n")
 
 
-    net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections).to(device=device)
+    net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections, args.use_softmax).to(device=device)
     optimizer = optim.Adam(net.parameters(), lr=args.lrval)
     BATCH_SIZE = args.batch
     EPOCHS = args.epochs
