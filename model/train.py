@@ -53,16 +53,16 @@ def split_softmax(a):
     print('ERROR: split_softmax failed. Wrong data size')
 
 class Net_Linear(nn.Module):
-    def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=256, use_softmax = False):
+    def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=256):
         super().__init__()
 
         self.i = input_size #len(train_x[0])
         self.o = output_size #len(train_y[0])
         self.hid = hidden_layers
         self.con = connections_between_layers
-        print(use_softmax)
-        self.use_softmax = use_softmax
-        print(self.use_softmax)
+        #print(use_softmax)
+        #self.use_softmax = use_softmax
+        #print(self.use_softmax)
 
         if self.hid > 0: self.fc1 = nn.Linear(self.i, self.con)
         if self.hid > 1: self.fc2 = nn.Linear(self.con, self.con)
@@ -92,7 +92,7 @@ class Net_Linear(nn.Module):
         if self.hid > 9: x = F.relu(self.fc10(x))
         x = F.relu(self.fc11(x))
         print('running if stateament ')
-        if self.use_softmax:
+        if False:
             return split_softmax(x)
         return x
 
