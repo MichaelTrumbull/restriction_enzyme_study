@@ -7,7 +7,7 @@ do
  for j in mse crossent
  do
   echo "lossfunc $j"
-  for k in 256 512
+  for k in 128
   do
    echo "con $k"
    CUDA_VISIBLE_DEVICES=1 python model/train.py --batch 5 --epochs 999 --hid $i --lf $j --lrval 0.0001 --connections $k
