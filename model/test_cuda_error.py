@@ -18,7 +18,7 @@ class Net_Linear(nn.Module):
         x = F.relu(self.fc11(x))
         return x
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
+device = torch.device("cuda")
+
 net = Net_Linear( 7000, 300).to(device)
 print('Finished')
