@@ -235,6 +235,7 @@ if __name__ == "__main__":
 
 
     net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections).to(device=device)
+    print('exited net')
     print(net)
     optimizer = optim.Adam(net.parameters(), lr=args.lrval)
     BATCH_SIZE = args.batch
