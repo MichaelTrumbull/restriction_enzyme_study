@@ -89,6 +89,7 @@ class Net_Linear(nn.Module):
         if self.hid > 8: x = F.relu(self.fc9(x))
         if self.hid > 9: x = F.relu(self.fc10(x))
         x = self.fc11(x)
+        print('running if stateament ')
         if self.use_softmax:
             return split_softmax(x)
         return x
