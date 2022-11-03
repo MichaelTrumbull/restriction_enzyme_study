@@ -77,7 +77,9 @@ class Net_Linear(nn.Module):
 
         if self.hid > 0: self.fc11 = nn.Linear(self.con, self.o)
         if self.hid == 0: self.fc11 = nn.Linear(self.i, self.o) # no connections
+        print('ending init for network')
     def forward(self, x):
+        print('starting forward')
         if self.hid > 0: x = F.relu(self.fc1(x))
         if self.hid > 1: x = F.relu(self.fc2(x))
         if self.hid > 2: x = F.relu(self.fc3(x))
