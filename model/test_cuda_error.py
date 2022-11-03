@@ -20,5 +20,5 @@ class Net_Linear(nn.Module):
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-net = Net_Linear( 7000, 300).to(device=device)
+net = Net_Linear( 7000, 300)#.to(device=device)
 print('Finished')
