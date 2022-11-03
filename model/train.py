@@ -240,7 +240,7 @@ if __name__ == "__main__":
     hold_losses = []
     hold_losses_epoch = []
     for epoch in range(EPOCHS):
-        print(epoch, '/', EPOCHS, end='\r')
+        print('epoch',epoch)
         hold_losses_epoch.append(0)
         for i in range(0, len(train_x), BATCH_SIZE): 
             batch_x = train_x[i:i+BATCH_SIZE]
