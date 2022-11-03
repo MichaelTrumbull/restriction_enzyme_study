@@ -60,7 +60,9 @@ class Net_Linear(nn.Module):
         self.o = output_size #len(train_y[0])
         self.hid = hidden_layers
         self.con = connections_between_layers
+        print(use_softmax)
         self.use_softmax = use_softmax
+        print(self.use_softmax)
 
         if self.hid > 0: self.fc1 = nn.Linear(self.i, self.con)
         if self.hid > 1: self.fc2 = nn.Linear(self.con, self.con)
