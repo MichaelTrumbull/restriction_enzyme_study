@@ -234,7 +234,7 @@ if __name__ == "__main__":
         f.write("train_y.size():" + str(train_y.size()) + "\n")
 
 
-    net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections, args.use_softmax).to(device=device)
+    net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections).to(device=device)
     print(net)
     optimizer = optim.Adam(net.parameters(), lr=args.lrval)
     BATCH_SIZE = args.batch
