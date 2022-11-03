@@ -8,12 +8,12 @@ class Net_Linear(nn.Module):
         print('Start of init')
         self.fc11 = nn.Linear(input, output)
         print('End of init')
-        
+
     def forward(self, x):
         x = F.relu(self.fc11(x))
         return x
 
 device = torch.device("cuda")
 
-net = Net_Linear( 100, 100).to(device)
+net = Net_Linear(10, 10).to(device)
 print('Finished')
