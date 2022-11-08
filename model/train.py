@@ -9,9 +9,7 @@ import torch.optim as optim
 import argparse
 from datetime import datetime
 import os
-print('after imports')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
 
 ################################################################################################################################################################################
 # Network block
@@ -53,13 +51,14 @@ def split_softmax(a):
     print('ERROR: split_softmax failed. Wrong data size')
 
 class Net_Linear(nn.Module):
-    def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=256):
+    def __init__(self, input_size=10, output_size=10, hidden_layers=0, connections_between_layers=256, use_sm=False):
         super().__init__()
 
         self.i = input_size #len(train_x[0])
         self.o = output_size #len(train_y[0])
         self.hid = hidden_layers
         self.con = connections_between_layers
+        self.use_softmax = use_sm
         #print(use_softmax)
         #self.use_softmax = use_softmax
         #print(self.use_softmax)
@@ -77,9 +76,7 @@ class Net_Linear(nn.Module):
 
         if self.hid > 0: self.fc11 = nn.Linear(self.con, self.o)
         if self.hid == 0: self.fc11 = nn.Linear(self.i, self.o) # no connections
-        print('ending init for network')
     def forward(self, x):
-        print('starting forward')
         if self.hid > 0: x = F.relu(self.fc1(x))
         if self.hid > 1: x = F.relu(self.fc2(x))
         if self.hid > 2: x = F.relu(self.fc3(x))
@@ -91,8 +88,7 @@ class Net_Linear(nn.Module):
         if self.hid > 8: x = F.relu(self.fc9(x))
         if self.hid > 9: x = F.relu(self.fc10(x))
         x = F.relu(self.fc11(x))
-        print('running if stateament ')
-        if False:
+        if self.use_softmax:
             return split_softmax(x)
         return x
 
@@ -189,7 +185,6 @@ def split_mse_136(a, target): # this should be used if target data is from "data
 # Main
 ################################################################################################################################################################################
 if __name__ == "__main__":
-    print('starting main')
     ################################################################################################################################################################################
     # Setup block
     ################################################################################################################################################################################
@@ -234,9 +229,7 @@ if __name__ == "__main__":
         f.write("train_y.size():" + str(train_y.size()) + "\n")
 
 
-    net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections).to(device=device)
-    print('exited net')
-    print(net)
+    net = Net_Linear( len(train_x[0]), len(train_y[0]), args.hid, args.connections, args.use_softmax).to(device=device)
     optimizer = optim.Adam(net.parameters(), lr=args.lrval)
     BATCH_SIZE = args.batch
     EPOCHS = args.epochs
@@ -244,7 +237,6 @@ if __name__ == "__main__":
     hold_losses = []
     hold_losses_epoch = []
     for epoch in range(EPOCHS):
-        print('epoch',epoch)
         hold_losses_epoch.append(0)
         for i in range(0, len(train_x), BATCH_SIZE): 
             batch_x = train_x[i:i+BATCH_SIZE]
@@ -276,7 +268,7 @@ if __name__ == "__main__":
     with open(savepath + "/epochloss.txt", "w") as f: 
         f.write(str(hold_losses_epoch))
     #torch.save(net.state_dict(), run_name + ".statedict" )
-
+'''
     import matplotlib.pyplot as plt
     plt.figure(0)
     plt.plot(hold_losses)
@@ -288,3 +280,4 @@ if __name__ == "__main__":
     plt.title('epochs:b' + str(args.batch) + 'c' + str(args.connections) + 'h' + str(args.hid) + 'target' + str(args.target_path))
     plt.savefig(savepath + "/epochloss.png")
     print('finished')
+'''
