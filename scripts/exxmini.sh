@@ -10,7 +10,7 @@ do
   for k in 256 512
   do
    echo "con $k"
-   CUDA_VISIBLE_DEVICES=1 python model/train.py --batch 3 --epochs 999 --hid $i --lf $j --lrval 0.0001 --connections $k
+   CUDA_VISIBLE_DEVICES=0 python model/train.py --batch 3 --epochs 999 --hid $i --lf $j --lrval 0.0001 --connections $k
   done
  done
 done
