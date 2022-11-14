@@ -1,0 +1,5 @@
+This directory, ESM1b_scripts, is considered old. It's failings included:
+1.esm input data build was not averaged for each residue, leading to a huge amount of input data that did not perform well.
+2.cross entropy has been completely misimplemented.
+3.being a first pass at the structure it is very messy and needed to be rewritten.
+I suggest nothing in this directory is used.

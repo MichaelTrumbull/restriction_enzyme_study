@@ -1,4 +1,4 @@
-name: methyl_motifs_venv
+name: met_motifs_venv
 channels:
   - conda-forge
   - bioconda

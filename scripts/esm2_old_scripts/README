@@ -1,0 +1,6 @@
+scripts in this directory needed to be rewritten. Training was successful and the loss was improved but there are areas that these scripts were lacking.
+1. Target data was redundant as it represented BOTH sides of the DNA sequence it was targeting.
+2. cross entropy was misimplemented. It needed to be applied to each individual bit, NOT each 4bit.
+3. as I look at new networks it will get messy so I need to separate files for organization reasons.
+4. need to clean up the file. It has gotten messy while I rapidly tried new ideas.
+Don't use the scripts in this directory.
