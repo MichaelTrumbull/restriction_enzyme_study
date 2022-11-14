@@ -75,8 +75,11 @@ if __name__ == "__main__":
 
     hold_losses = []
     hold_losses_epoch = []
+    validloss = []
+    evalidloss = []
     for epoch in range(EPOCHS):
         hold_losses_epoch.append(0)
+        evalidloss.append(0)
         for i in range(0, len(train_x), BATCH_SIZE): 
             batch_x = train_x[i:i+BATCH_SIZE]
             batch_y = train_y[i:i+BATCH_SIZE]
@@ -95,10 +98,25 @@ if __name__ == "__main__":
 
             hold_losses.append(loss.item()) # was originally outside batch loop...
             hold_losses_epoch[epoch] = hold_losses_epoch[epoch] + loss.item()
+        for i in range(0, len(valid_x), BATCH_SIZE): 
+            batch_x = valid_x[i:i+BATCH_SIZE]
+            batch_y = valid_y[i:i+BATCH_SIZE]
+
+            batch_x = batch_x.to(device=device)
+            batch_y = batch_y.to(device=device)
+
+            outputs = net(batch_x)
+            l = mse(outputs, batch_y).item()
+            validloss.append( l )
+            evalidloss[epoch] = evalidloss[epoch] + l
     
 
     with open(savepath + "/loss.txt", "w") as f: 
         f.write(str(hold_losses))
     with open(savepath + "/epochloss.txt", "w") as f: 
         f.write(str(hold_losses_epoch))
+    with open(savepath + "/validloss.txt", "w") as f: 
+        f.write(str(validloss))
+    with open(savepath + "/evalidloss.txt", "w") as f: 
+        f.write(str(evalidloss))
     #torch.save(net.state_dict(), run_name + ".statedict" )
