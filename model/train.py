@@ -47,8 +47,11 @@ if __name__ == "__main__":
     if not os.path.exists("runs/" + rungroup): os.mkdir("runs/" + rungroup)
     os.mkdir(savepath)
 
-    train_x = torch.load(args.input_path)
-    train_y = torch.load(args.target_path)
+    train_x = torch.load(args.input_path)[0:400]
+    train_y = torch.load(args.target_path)[0:400]
+
+    valid_x = torch.load(args.input_path)[400:]
+    valid_y = torch.load(args.target_path)[400:]
 
     with open(savepath + "/setup.log", "w") as f: 
         f.write(run_name + "\n")
