@@ -16,6 +16,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 mse = nn.MSELoss()
 crossentropy = nn.CrossEntropyLoss()
 def split_crossentropy(input,target):
+    print('WARNING: DO NOT USE THIS FUNC. I DONT UNDERSTAND HOW IT WORKS SO IT PROBABLY DOESNT WORK AS INTENDED. ')
     '''
     Because this one-hot scheme is not mutually exclusive, cross entropy would not work. 
     Instead, we can treat each bit (not 4bit residue) as the mutually exclusive states.
@@ -24,11 +25,13 @@ def split_crossentropy(input,target):
     hold = 0
     for i in range(int( len( input[0] ) )):
         hold = hold + crossentropy(input[:,i], target[:,i]).item()
-    return torch.tensor( sum(hold)/len(input[0]) , requires_grad=True).to(device=device)
+    print(len(input[0]))
+    print(hold)
+    return torch.tensor( hold/len(input[0]) , requires_grad=True).to(device=device)
 
 if __name__ == "__main__":
 
-    rungroup = "VeryLongRun_nosoftmax_nosplit"
+    rungroup = "train-validation_first_attempt"
     parser = argparse.ArgumentParser()
     parser.add_argument('--epochs', type=int, default=9, help="integer value of number of epochs to run for")
     parser.add_argument('--connections', type=int, default=256, help="number of connections between nodes in linear layers")
@@ -106,9 +109,9 @@ if __name__ == "__main__":
             batch_y = batch_y.to(device=device)
 
             outputs = net(batch_x)
-            l = mse(outputs, batch_y).item()
-            validloss.append( l )
-            evalidloss[epoch] = evalidloss[epoch] + l
+            vloss = mse(outputs, batch_y).item()
+            validloss.append( vloss )
+            evalidloss[epoch] = evalidloss[epoch] + vloss
     
 
     with open(savepath + "/loss.txt", "w") as f: 
