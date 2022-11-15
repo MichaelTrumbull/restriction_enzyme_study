@@ -1,5 +1,5 @@
 source lib/conda/bin/activate
-conda activate metal_motifs_env
+conda activate methyl_motifs_venv
 
 for i in 3 4 5
 do
