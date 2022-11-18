@@ -31,7 +31,7 @@ def split_crossentropy(input,target):
 
 if __name__ == "__main__":
 
-    rungroup = "train-validation_first_attempt"
+    
     parser = argparse.ArgumentParser()
     parser.add_argument('--epochs', type=int, default=9, help="integer value of number of epochs to run for")
     parser.add_argument('--connections', type=int, default=256, help="number of connections between nodes in linear layers")
@@ -41,8 +41,10 @@ if __name__ == "__main__":
     parser.add_argument('--input_path', type=str, default='data/esm2_3B_avg.pt', help="location of input tensor for training")
     parser.add_argument('--target_path', type=str, default="data/Methylation_Motif_oneside.pt", help="location of input tensor for training")
     parser.add_argument('--lf',type=str,default='mse', choices=['crossent', 'mse'], help="Loss function to be used")
+    parser.add_argument('--group', type=str, default='NOT_SPECIFIED', help="dir to group runs in")
     args = parser.parse_args()
 
+    rungroup = args.group
 
     run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f")
     savepath = "runs/" + rungroup + "/" + run_name
