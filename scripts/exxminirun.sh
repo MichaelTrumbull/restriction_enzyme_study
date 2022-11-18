@@ -11,7 +11,7 @@ do
   for k in 512 1024 2048
   do
    echo "con $k"
-   CUDA_VISIBLE_DEVICES=0 python model/train.py --batch 3 --epochs 999 --hid $i --lf $j --lrval 0.0001 --connections $k --group train-validation_second_attempt
+   CUDA_VISIBLE_DEVICES=1 python model/train.py --batch 3 --epochs 999 --hid $i --lf $j --lrval 0.0001 --connections $k --group train-validation_second_attempt
   done
  done
 done
