@@ -93,7 +93,7 @@ if __name__ == "__main__":
             batch_y = batch_y.to(device=device)
 
             net.zero_grad()
-            outputs = net(batch_x).requires_grad(True)
+            outputs = net(batch_x)
 
             if args.lf == "mse": loss = mse(outputs, batch_y)
             if args.lf == "crossent_1": loss = split_crossentropy_1(outputs, batch_y)
