@@ -42,21 +42,22 @@ if __name__ == "__main__":
     parser.add_argument('--target_path', type=str, default="data/Methylation_Motif_oneside.pt", help="location of input tensor for training")
     parser.add_argument('--lf',type=str,default='mse', choices=['crossent', 'mse'], help="Loss function to be used")
     parser.add_argument('--group', type=str, default='NOT_SPECIFIED', help="dir to group runs in")
+    parser.add_argument('--run_name', type=str, default='NOT_SPECIFIED', help="dir to group runs in")
     args = parser.parse_args()
 
     rungroup = args.group
 
-    run_name = datetime.now().strftime("%m_%d_%H_%M_%S_%f")
+    run_name = args.run_name #datetime.now().strftime("%m_%d_%H_%M_%S_%f")
     savepath = "runs/" + rungroup + "/" + run_name
     if not os.path.exists("runs/"): os.mkdir("runs/")
     if not os.path.exists("runs/" + rungroup): os.mkdir("runs/" + rungroup)
     os.mkdir(savepath)
 
-    train_x = torch.load(args.input_path)[0:400]
-    train_y = torch.load(args.target_path)[0:400]
+    train_x = torch.load(args.input_path)[0:500]
+    train_y = torch.load(args.target_path)[0:500]
 
-    valid_x = torch.load(args.input_path)[400:]
-    valid_y = torch.load(args.target_path)[400:]
+    valid_x = torch.load(args.input_path)[500:]
+    valid_y = torch.load(args.target_path)[500:]
 
     with open(savepath + "/setup.log", "w") as f: 
         f.write(run_name + "\n")

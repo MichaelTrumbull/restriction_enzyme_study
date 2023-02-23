@@ -1,10 +1,17 @@
 source lib/conda/bin/activate
 conda activate methyl_motifs_venv
 
-python scripts/build_data/Methylation_Motif_oneside.py
-python scripts/build_data/Methylation_Motif_padlast.py
-python scripts/build_data/Methylation_Motif_padmiddle.py
-python scripts/build_data/motif1stHalf2ndHalf_padmiddle_numN.py
+python scripts/build_data/target_methylation_motif_oneside_pseudoonehot_numN_padend.py
+python scripts/build_data/target_methylation_motif_oneside_pseudoonehot_numN_padmiddle.py
+python scripts/build_data/target_methylation_motif_oneside_pseudoonehot_padend.py
+python scripts/build_data/target_methylation_motif_oneside_trueonehot_numN_padend.py
+python scripts/build_data/target_methylation_motif_oneside_trueonehot_numN_padmiddle.py
+python scripts/build_data/target_methylation_motif_oneside_trueonehot_padend.py
 
-python scripts/build_data/esm2_3B_avg.py
-python scripts/build_data/esm2_15B_avg.py
+#python scripts/build_data/Methylation_Motif_oneside.py
+#python scripts/build_data/Methylation_Motif_padlast.py
+#python scripts/build_data/Methylation_Motif_padmiddle.py
+#python scripts/build_data/motif1stHalf2ndHalf_padmiddle_numN.py
+
+#python scripts/build_data/esm2_3B_avg.py
+#python scripts/build_data/esm2_15B_avg.py
