@@ -51,11 +51,11 @@ if __name__ == "__main__":
     if not os.path.exists("runs/" + rungroup): os.mkdir("runs/" + rungroup)
     os.mkdir(savepath)
 
-    train_x = torch.load(args.input_path)[0:500]
-    train_y = torch.load(args.target_path)[0:500]
+    train_x = torch.load(args.input_path, requires_grad=True)[0:500]
+    train_y = torch.load(args.target_path, requires_grad=True).type(torch.int64)[0:500]
 
-    valid_x = torch.load(args.input_path)[500:]
-    valid_y = torch.load(args.target_path)[500:]
+    valid_x = torch.load(args.input_path, requires_grad=True)[500:]
+    valid_y = torch.load(args.target_path, requires_grad=True).type(torch.int64)[500:]
 
     with open(savepath + "/setup.log", "w") as f: 
         f.write(run_name + "\n")
@@ -92,7 +92,7 @@ if __name__ == "__main__":
             batch_y = batch_y.to(device=device)
 
             net.zero_grad()
-            outputs = net(batch_x)
+            outputs = net(batch_x).requires_grad(True)
 
             if args.lf == "mse": loss = mse(outputs, batch_y)
             if args.lf == "crossent_1": loss = split_crossentropy_1(outputs, batch_y)
