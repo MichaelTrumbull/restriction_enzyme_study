@@ -17,14 +17,15 @@ mse = nn.MSELoss()
 crossentropy = nn.CrossEntropyLoss()
 def split_crossentropy_1(input,target): 
     hold_losses = crossentropy(input[:,0:1], target[:,0:1]).item() 
-    for i in range(int(len(input[0])/4) - 1):
-        hold_losses = hold_losses + crossentropy(input[:,(i+1)*4:(i+2)*4], target[:,(i+1)*4:(i+2)*4]).item()
-    return torch.tensor( hold_losses/(len(input[0])/4) , requires_grad=True) # return the average
+    for i in range(int(len(input[0])) - 1):
+        hold_losses = hold_losses + crossentropy(input[:,(i+1)*1:(i+2)*1], target[:,(i+1)*1:(i+2)*1]).item()
+    return torch.tensor( hold_losses/(len(input[0])) , requires_grad=True) # return the average
+
 def split_crossentropy_15(input,target): 
     hold_losses = crossentropy(input[:,0:15], target[:,0:15]).item() 
-    for i in range(int(len(input[0])/4) - 1):
-        hold_losses = hold_losses + crossentropy(input[:,(i+1)*4:(i+2)*4], target[:,(i+1)*4:(i+2)*4]).item()
-    return torch.tensor( hold_losses/(len(input[0])/4) , requires_grad=True) # return the average
+    for i in range(int(len(input[0])/15) - 1):
+        hold_losses = hold_losses + crossentropy(input[:,(i+1)*15:(i+2)*15], target[:,(i+1)*15:(i+2)*15]).item()
+    return torch.tensor( hold_losses/(len(input[0])/15) , requires_grad=True) # return the average
 
 if __name__ == "__main__":
 
@@ -110,7 +111,8 @@ if __name__ == "__main__":
             batch_y = batch_y.to(device=device)
 
             outputs = net(batch_x)
-            vloss = mse(outputs, batch_y).item()
+            vloss = mse(outputs, batch_y).item() 
+            # use F1 as validation loss...
             validloss.append( vloss )
             evalidloss[epoch] = evalidloss[epoch] + vloss
     
