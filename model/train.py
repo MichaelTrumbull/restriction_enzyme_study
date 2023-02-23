@@ -15,19 +15,16 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 mse = nn.MSELoss()
 crossentropy = nn.CrossEntropyLoss()
-def split_crossentropy(input,target):
-    print('WARNING: DO NOT USE THIS FUNC. I DONT UNDERSTAND HOW IT WORKS SO IT PROBABLY DOESNT WORK AS INTENDED. ')
-    '''
-    Because this one-hot scheme is not mutually exclusive, cross entropy would not work. 
-    Instead, we can treat each bit (not 4bit residue) as the mutually exclusive states.
-    '''
-    hold =  crossentropy(input[:,0], target[:,0]).item()
-    hold = 0
-    for i in range(int( len( input[0] ) )):
-        hold = hold + crossentropy(input[:,i], target[:,i]).item()
-    print(len(input[0]))
-    print(hold)
-    return torch.tensor( hold/len(input[0]) , requires_grad=True).to(device=device)
+def split_crossentropy_1(input,target): 
+    hold_losses = crossentropy(input[:,0:1], target[:,0:1]).item() 
+    for i in range(int(len(input[0])/4) - 1):
+        hold_losses = hold_losses + crossentropy(input[:,(i+1)*4:(i+2)*4], target[:,(i+1)*4:(i+2)*4]).item()
+    return torch.tensor( hold_losses/(len(input[0])/4) , requires_grad=True) # return the average
+def split_crossentropy_15(input,target): 
+    hold_losses = crossentropy(input[:,0:15], target[:,0:15]).item() 
+    for i in range(int(len(input[0])/4) - 1):
+        hold_losses = hold_losses + crossentropy(input[:,(i+1)*4:(i+2)*4], target[:,(i+1)*4:(i+2)*4]).item()
+    return torch.tensor( hold_losses/(len(input[0])/4) , requires_grad=True) # return the average
 
 if __name__ == "__main__":
 
@@ -40,7 +37,7 @@ if __name__ == "__main__":
     parser.add_argument('--batch', type=int, default=32, help="batch size. total len of dataset=600")
     parser.add_argument('--input_path', type=str, default='data/esm2_3B_avg.pt', help="location of input tensor for training")
     parser.add_argument('--target_path', type=str, default="data/Methylation_Motif_oneside.pt", help="location of input tensor for training")
-    parser.add_argument('--lf',type=str,default='mse', choices=['crossent', 'mse'], help="Loss function to be used")
+    parser.add_argument('--lf',type=str,default='mse', choices=['crossent_15','crossent_1', 'mse'], help="Loss function to be used")
     parser.add_argument('--group', type=str, default='NOT_SPECIFIED', help="dir to group runs in")
     parser.add_argument('--run_name', type=str, default='NOT_SPECIFIED', help="dir to group runs in")
     args = parser.parse_args()
@@ -97,7 +94,8 @@ if __name__ == "__main__":
             outputs = net(batch_x)
 
             if args.lf == "mse": loss = mse(outputs, batch_y)
-            if args.lf == "crossent": loss = split_crossentropy(outputs, batch_y)
+            if args.lf == "crossent_1": loss = split_crossentropy_1(outputs, batch_y)
+            if args.lf == "crossent_15": loss = split_crossentropy_15(outputs, batch_y)
             
             loss.backward()
             optimizer.step()
